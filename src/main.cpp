@@ -15,14 +15,26 @@ char trap='S';
 //Choose if we have a non-interaction case (0) or an interaction (1)
 int interaction=0;
 
-
 int main() {
-    declare_trap(trap, interaction);
-    cout << "Hello World! hei\n";
-    double x=distance_particle(3,2,0,9,7,0);
-    cout<<x;
-    cout << "Hello World! hei\n";
-    cout<<beta;
 
-    return 0;
+  // Seed for the random number generator
+
+  int n_dim                 = 1;          //Number of dimensions
+  int n_particle            = 1;          //Number of particles
+  int n_steps         = 1000000;          //Number of steps
+  double omega            = 1.0;          // Oscillator frequency.
+  double alpha            = 0.5;          // Variational parameter.
+  double step_length      = 0.1;          // Metropolis step length.
+  double equilibration    = 0.1;          // Amount of the total steps used
+  // for equilibration.
+
+  System* system = new System(int 2021);
+  system->setHamiltonian              (new HarmonicOscillator(system, omega));
+  system->setWaveFunction             (new SimpleGaussian(system, alpha));
+  system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
+  system->setEquilibrationFraction    (equilibration);
+  system->setStepLength               (stepLength);
+  system->runMetropolisSteps          (numberOfSteps);
+
+  return 0;
 }
