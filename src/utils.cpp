@@ -5,6 +5,7 @@
 #include <iostream>
 #include <math.h>
 
+
 /*
 //#define Globalvariables søk på det
 //Constants, most of them is set equal to one, for a dimensionless calculation

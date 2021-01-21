@@ -1,0 +1,33 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Discussion}
+
+\subsection{Fashion-MNIST}
+\subsubsection{Logistic regression}
+When using logistic regression on the fashion mnist, the accuracy ended up with a decent 84\% score on the testset. This is quite good considering that logistic regression is a regression method. Having a look at the confusion matrix in figure \ref{fig:logreg_mnist_cm}, it is easy to see which articles was the hardest to classify, and which ones the easiest. The correct predictions is, as mentioned in the theory along the diagonal. The easiest articles to recognize was the trousers with an accuracy of 96\%, boots with an accuracy of 95\%, and sneakers, bags and sandals with accuracy's of 94-, 93- and 92\% respectively. The most difficult one to classify was without doubt the shirts with an accuracy of 57\%. Followed by pullovers and coats with 74- and 76\% accuracy respectively. The reason the model struggled some bit to classify shirts is most certain because shirts resembles tops, pullovers and coats a lot, which is backed up by the confusion matrix which shows that about 35\% of the shirts were predicted into those three categories.
+
+\subsubsection{CNN}
+The training history initially tells a quite clear tale of of overfitting. The loss consistently lowers on the training set, while simultaneously increasing on the validation set. This is easily solved by implementing dropout throughout the network, which we see (in figure \ref{fig:fashion_mnist_cnn_dropout_history}) prevents the overfitting and allows a more normal progression throughout the training session.
+
+The accuracy is quite high for a dataset of this size, and we declare the experiment successful. The teachings of this exercise - especially the implementation of dropout to prevent overfitting - is employed in the facemask model.
+
+\subsection{Facemask detection}
+\subsubsection{Logistic regression}
+Applying the logistic regression model on the facemask detection dataset, ended up with a promising accuracy of 95\%. This is a lot better than expected due to logistic regression being a regression method. 
+
+The model predicting really well, is probably due to the photos being quiet noncomplex, with a lot of the images being front faced with the mask in the middle. Having a look at the confusion matrix in figure \ref{fig:logreg_facemask_cm}, it is easy to notice that the model is predicting the same amount of correct mask images as correct non-mask images, with 95\% correct answers withing each category. Having a look at figure \ref{fig:missclassified_logreg_facemask} it is easy to notice that the images that was missclassified is generally images that have some length towards the person in the picture, making more room for details around the person making the whole picture a more complex image.
+
+Moving over to figure \ref{fig:logreg_real_pics}, which shows the predictions of real life pictures taken by us and predicted by the model, shows that the model managed to guess 3/4 of the images which is alright, but can't really be taken seriously due to the fact that it was only tested on four photos, in addition the four photos were really simplistic being a front photo with a plane background.
+
+
+\subsubsection{CNN}
+The networks training session progressed promisingly and our accuracy was satisfactory. It is however worth mentioning that many of the pictures in the dataset are stock photos with facemasks edited in, which means the masks are very similar and the photos have similar properties (focus, aspect ratio, and so on). When testing on the photos taken of ourselves, the accuracy quickly declined to around $50\%$ (there were rather few photos, mind you, and a greater dataset is needed to prove any significance). This might be due to the fact that these photos were taken in portrait, while the training set mostly included prefectly square photos. The scaling necessary to do a prediction might have led to artifacts that made it difficult to discern the prescence/absence/incorrectness of a mask.
+
+To improve upon the model, the perhaps most important step is to gather a more diverse dataset, including different angles, aspect ratios and mask types. A higher accuracy could also be gained by implementing a separate model that recognizes faces/heads and crops the picture to match them. This would alleviate the issue of aspect ratio and ensure a predictable "correct" position of the mask, improving the accuracy of guessing incorrectly placed masks.
+
+\subsection{Logistic regression or CNN?}
+The question of which method is more effective is clearly answered: the CNN. This is in line with our expectations. However, the logistic regression method did surprisingly well and shows a greater promise than expected. This might be due to the dataset being fairly homogeneous. The masks are generally found in the center of the photo, and are prominently light blue, which the logistic regression method seems to be able to fit quite well. That being said, there seems to be more to gain in further improving the accuracy, by utilizing a CNN.
+
+\end{document}

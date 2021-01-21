@@ -1,0 +1,59 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}   % Images
+\usepackage{subfiles}   % Include subfiles
+\usepackage{hyperref}   % Nice referencing with clickable links
+\usepackage{amsmath}    % Math
+\usepackage[style=ieee]{biblatex}   % Citations
+\usepackage{fvextra}
+\usepackage{csquotes}   % Honestly no idea what this does...
+\usepackage{minted}
+\usepackage{comment}
+\usepackage{amssymb}
+\usepackage[parfill]{parskip}
+\usepackage{pythonhighlight}
+\usepackage{gensymb}
+\usepackage{cleveref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+
+\graphicspath{{img/}{../img/}}
+\addbibresource{references.bib}
+
+%\setlength{\parindent}{0pt}
+
+\title{Comparing Convolutional Neural Network and Logistic Regression on the Fashion MNIST and Facemask Detection Dataset }
+\author{Knut Magnus Aasrud \\ Philip Karim Niane \\ Ida Due-Sørensen}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\subfile{section/1_abstract}
+
+\subfile{section/2_introduction}
+
+\subfile{section/3_theory}
+
+\subfile{section/4_method}
+
+\subfile{section/5_results}
+
+\subfile{section/6_discussion}
+
+\subfile{section/7_conclusion}
+
+\printbibliography
+\clearpage
+\appendix
+\subfile{section/8_appendix}
+
+
+%\bibliographystyle{apalike}
+
+
+\end{document}
