@@ -42,7 +42,7 @@ bool System::metropolisStep() {
      //_________BRUTE FORCE_____________
 
      int random_index=0;
-     double psi_factor, temp_num;
+     double psi_factor;
      double wfold=m_stepLength;
      std::vector<double> PositionOld=std::vector<double>();
 

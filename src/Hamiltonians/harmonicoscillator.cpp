@@ -5,6 +5,7 @@
 #include "../particle.h"
 #include "../WaveFunctions/wavefunction.h"
 
+
 using std::cout;
 using std::endl;
 
@@ -24,9 +25,41 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
      * getWaveFunction method in the m_system object in the super-class, i.e.
      * m_system->getWaveFunction()...
      */
-
+/*
     double potentialEnergy = 0;
     double kineticEnergy   = 0;
+    //double wf=m_system->getWaveFunction()->evaluate(particles);
+
+    //Computing the kinetic energy
+    kineticEnergy=(1.0/m_system->getWaveFunction()->evaluate(particles))*
+                  0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
+
+    //Computing the potential energy
+    for (int i = 0; i<m_system->getNumberOfParticles();i++){
+           for(int dim = 0; dim<m_system->getNumberOfDimensions(); dim++){
+               double rr = particles.at(i)->getPosition().at(dim);
+               potentialEnergy+= 0.5*m_omega*m_omega*rr*rr;
+           }
+       }
+
     return kineticEnergy + potentialEnergy;
 }
+*/
+    double potentialEnergy = 0;
+    double kineticEnergy   = 0;
+    //double wf=m_system->getWaveFunction()->evaluate(particles);
 
+    //Computing the kinetic energy
+    kineticEnergy=(1.0/m_system->getWaveFunction()->evaluate(particles))*
+                  0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
+
+    //Computing the potential energy
+    for (int i = 0; i<m_system->getNumberOfParticles();i++){
+           for(int dim = 0; dim<m_system->getNumberOfDimensions(); dim++){
+               double rr = particles.at(i)->getPosition().at(dim);
+               potentialEnergy+= 0.5*m_omega*m_omega*rr*rr;
+           }
+       }
+
+    return kineticEnergy + potentialEnergy;
+}
