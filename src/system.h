@@ -6,6 +6,14 @@ class System {
 public:
     System();
     System(int seed);
+    //Added aftertremoved with typos?
+    /*
+    void setPosition(const std::vector<double> &position);
+    void adjustPosition(double change, int dimension);
+    void setNumberOfDimensions(int numberOfDimensions);
+    std::vector<double> getPosition() { return m_position; }
+    */
+    //
     bool metropolisStep             ();
     void runMetropolisSteps         (int numberOfMetropolisSteps);
     void setNumberOfParticles       (int numberOfParticles);

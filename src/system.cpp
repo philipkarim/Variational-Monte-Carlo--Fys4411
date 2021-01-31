@@ -15,6 +15,22 @@ System::System() {
 System::System(int seed) {
     m_random = new Random(seed);
 }
+/*
+//These three were removed with typos, not needed for brute force metro?
+void System::setPosition(const std::vector<double> &position) {
+    assert(position.size() == (unsigned int) m_numberOfDimensions);
+    m_position = position;
+}
+
+void System::adjustPosition(double change, int dimension) {
+    m_position.at(dimension) += change;
+}
+
+void System::setNumberOfDimensions(int numberOfDimensions) {
+    m_numberOfDimensions = numberOfDimensions;
+}
+*/
+//_______________
 
 bool System::metropolisStep() {
     /* Perform the actual Metropolis step: Choose a particle at random and
@@ -23,7 +39,48 @@ bool System::metropolisStep() {
      * at this new position with the one at the old position).
      */
 
-    return false;
+     //_________BRUTE FORCE_____________
+
+     int random_index=0;
+     double psi_factor, temp_num;
+     double wfold=m_stepLength;
+     std::vector<double> PositionOld=std::vector<double>();
+
+     //Random integer generator
+     std::random_device rd;
+     std::mt19937_64 gen(rd());
+     std::uniform_int_distribution<int> distribution(0,m_numberOfParticles-1);
+     std::uniform_real_distribution<double> UniformNumberGenerator(0.0,1.0);
+
+     //Random index used to choose a random particle
+     random_index=distribution(gen);
+
+     //Defining the random particle:
+
+
+    PositionOld=m_particles[random_index]->getPosition();
+
+     //Choosing a random step:
+     double temp_rand=UniformNumberGenerator(gen);
+     double step=m_stepLength*(temp_rand-0.5);
+
+     //Start the step which gives movement of the particle
+     for (int dim=0; dim<m_numberOfDimensions; dim++){
+       m_particles[random_index]->adjustPosition(step, dim);
+     }
+
+     //Extracting the new wavefunction, and checks if it is accepted
+     double wfnew=m_waveFunction->evaluate(m_particles);
+     psi_factor=wfnew*wfnew/(wfold*wfold);
+     //If accepted:
+     if (temp_rand<=psi_factor){
+        wfold=wfnew;
+        return true;
+     }
+     else{
+         m_particles[random_index]->setPosition(PositionOld);
+        return false;
+      }
 }
 
 void System::runMetropolisSteps(int numberOfMetropolisSteps) {
@@ -41,7 +98,12 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          * for a while. You may handle this using the fraction of steps which
          * are equilibration steps; m_equilibrationFraction.
          */
-        m_sampler->sample(acceptedStep);
+
+         //If statement to make send the accepted steps into the sampler
+         //after the system is at rest
+         if (i>=numberOfMetropolisSteps*m_equilibrationFraction){
+            m_sampler->sample(acceptedStep);
+         }
     }
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
