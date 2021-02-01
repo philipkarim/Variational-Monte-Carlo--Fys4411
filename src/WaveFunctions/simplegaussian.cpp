@@ -44,7 +44,7 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
 }
     */
 //
-    
+
     double r_tot=0.0, psi=1.0;
     std::vector<double> r_pos;
 
@@ -79,14 +79,14 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
 
      //Non interacting, probably have to add a longer bit of code and an
      //if statement when adding the interacting case.
-     //This is analytically
+     //This is analytically and only works on simple gaussion functions
 
      // For non-interacting particles
      std::vector<double> r_pos;
      //Might try
      //double wf=->getWaveFunction();
      double wf=evaluate(particles);
-     double derivate2, r_tot;
+     double derivate2=0, r_tot=0;
 
      for(int i=0; i<m_system->getNumberOfParticles(); i++){
        r_pos=particles[i]->getPosition();
