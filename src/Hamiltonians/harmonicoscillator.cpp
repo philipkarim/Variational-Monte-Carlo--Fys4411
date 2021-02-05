@@ -25,59 +25,48 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
      * getWaveFunction method in the m_system object in the super-class, i.e.
      * m_system->getWaveFunction()...
      */
-/*
-    double potentialEnergy = 0;
-    double kineticEnergy   = 0;
-    //double wf=m_system->getWaveFunction()->evaluate(particles);
 
-    //Computing the kinetic energy
-    kineticEnergy=(1.0/m_system->getWaveFunction()->evaluate(particles))*
-                  0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
-
-    //Computing the potential energy
-    for (int i = 0; i<m_system->getNumberOfParticles();i++){
-           for(int dim = 0; dim<m_system->getNumberOfDimensions(); dim++){
-               double rr = particles.at(i)->getPosition().at(dim);
-               potentialEnergy+= 0.5*m_omega*m_omega*rr*rr;
-           }
-       }
-
-    return kineticEnergy + potentialEnergy;
-}
-*/
-    double r2, r_tot, derivate2;
+    double r2, r_tot, derivate2, potentialEnergyPart=0;
+    double x_part, y_part, z_part;
+    std::vector<double> r_pos;
     double potentialEnergy = 0;
     double kineticEnergy   = 0;
     double wf=m_system->getWaveFunction()->evaluate(particles);
-    //double wf=m_system->getWaveFunction()->evaluate(particles);
+    //double wf=evaluate(particles);
 
     //Computing the kinetic energy
-    for (int i = 0; i<m_system->getNumberOfParticles();i++){
-        kineticEnergy-=0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
 
-    }
+    //Might want to remove the 0.5 or atleast move it to simple gaussian cdd
+    kineticEnergy=m_system->getWaveFunction()->computeDoubleDerivative(particles);
+
 
     //Computing the potential energy (V_ext)
-    for (int i = 0; i<m_system->getNumberOfParticles();i++){
-           for(int dim = 0; dim<m_system->getNumberOfDimensions(); dim++){
-               double r2 = particles.at(i)->getPosition().at(dim);
-               potentialEnergy+= r2*r2;
-           }
-    }
-//
+    std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
+    std::iota(dimensions_length.begin(), dimensions_length.end(), 0);
+
     for(int i=0; i<m_system->getNumberOfParticles(); i++){
-      std::vector<double> r_pos=particles[i]->getPosition();
-      for (int dim=0; dim<m_system->getNumberOfDimensions(); dim++){
-        r_tot+=r_pos[dim]*r_pos[dim];
-        derivate2-=2*alpha*(2*alpha*r_tot)*wf;
+      r_pos=particles[i]->getPosition();
+
+      if (dimensions_length.size()==3){
+        x_part=r_pos[0]*r_pos[0];
+        y_part=r_pos[1]*r_pos[1];
+        z_part=r_pos[2]*r_pos[2];
       }
-      derivate2+=2*alpha*m_system->getNumberOfDimensions()*wf;
-//
+      else if(dimensions_length.size()==2){
+        x_part=r_pos[0]*r_pos[0];
+        y_part=r_pos[1]*r_pos[1];
+        z_part=0;
+      }
+      else {
+        x_part=r_pos[0]*r_pos[0];
+        y_part=0;
+        z_part=0;
+      }
 
-    potentialEnergy=0.5*m_omega*m_omega*r2;
-
-
+      potentialEnergyPart+=(x_part+y_part+z_part);
+    }
+    potentialEnergy=0.5*potentialEnergyPart*m_omega*m_omega*wf;
 
     return (kineticEnergy + potentialEnergy)/wf;
-}
+
 }

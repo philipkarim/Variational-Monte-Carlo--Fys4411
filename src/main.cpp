@@ -17,7 +17,7 @@ int main() {
     int seed = 2020;
 
     //Dim=2, particle=1 should give 0.5
-    int numberOfDimensions  = 1;
+    int numberOfDimensions  = 3;
     int numberOfParticles   = 1;
     int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // Oscillator frequency.
