@@ -28,7 +28,7 @@ int main() {
     // for equilibration.
 
     System* system = new System(seed);
-    system->setHamiltonian              (new HarmonicOscillator(system, omega));
+    system->setHamiltonian              (new HarmonicOscillator(system, omega, alpha));  //Added alpha
     system->setWaveFunction             (new SimpleGaussian(system, alpha, beta));
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
     system->setEquilibrationFraction    (equilibration);

@@ -9,7 +9,7 @@
 using std::cout;
 using std::endl;
 
-HarmonicOscillator::HarmonicOscillator(System* system, double omega) :
+HarmonicOscillator::HarmonicOscillator(System* system, double omega, double alpha) :
         Hamiltonian(system) {
     assert(omega > 0);
     m_omega  = omega;
@@ -45,7 +45,7 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
     return kineticEnergy + potentialEnergy;
 }
 */
-    double r2;
+    double r2, r_tot, derivate2;
     double potentialEnergy = 0;
     double kineticEnergy   = 0;
     double wf=m_system->getWaveFunction()->evaluate(particles);
@@ -66,12 +66,12 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
     }
 //
     for(int i=0; i<m_system->getNumberOfParticles(); i++){
-      r_pos=particles[i]->getPosition();
+      std::vector<double> r_pos=particles[i]->getPosition();
       for (int dim=0; dim<m_system->getNumberOfDimensions(); dim++){
         r_tot+=r_pos[dim]*r_pos[dim];
-        derivate2-=2*m_parameters[0]*(2*m_parameters[0]*r_tot)*wf;
+        derivate2-=2*alpha*(2*alpha*r_tot)*wf;
       }
-      derivate2+=2*m_parameters[0]*m_system->getNumberOfDimensions()*wf;
+      derivate2+=2*alpha*m_system->getNumberOfDimensions()*wf;
 //
 
     potentialEnergy=0.5*m_omega*m_omega*r2;
@@ -79,4 +79,5 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
 
 
     return (kineticEnergy + potentialEnergy)/wf;
+}
 }
