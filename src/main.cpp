@@ -16,24 +16,28 @@ int main() {
     // Seed for the random number generator
     int seed = 2020;
 
-    //Dim=2, particle=1 should give 0.5
-    int numberOfDimensions  = 3;
+    //Dim=1, particle=1 should give 0.5
+    int numberOfDimensions  = 1;
     int numberOfParticles   = 1;
     int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // Oscillator frequency.
     double alpha            = 0.5;          // Variational parameter.
     double beta             = 1;
     double stepLength       = 0.1;          // Metropolis step length.
-    double equilibration    = 0.1;          // Amount of the total steps used
-    // for equilibration.
+    double equilibration    = 0.1;          // Amount of the total steps used for equilibration.
+    bool numeric            = true;         // Use numeric derivation? =true
 
     System* system = new System(seed);
-    system->setHamiltonian              (new HarmonicOscillator(system, omega, alpha));  //Added alpha
+    system->setHamiltonian              (new HarmonicOscillator(system, omega));  //Added alpha
     system->setWaveFunction             (new SimpleGaussian(system, alpha, beta));
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
     system->runMetropolisSteps          (numberOfSteps);
+
+    system->setNumeric            (numeric);
+
+    //system->setNumberOfParticles        (numeric)
 
     return 0;
 }

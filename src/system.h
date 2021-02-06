@@ -33,6 +33,12 @@ public:
     int getNumberOfMetropolisSteps()    { return m_numberOfMetropolisSteps; }
     double getEquilibrationFraction()   { return m_equilibrationFraction; }
 
+    void setNumeric                 (bool numeric);
+    bool getNumeric()                   { return m_numeric; }
+    //bool getNumeric()          { return m_numeric; }
+
+
+
 private:
     int                             m_numberOfParticles = 0;
     int                             m_numberOfDimensions = 0;
@@ -45,4 +51,7 @@ private:
     class Sampler*                  m_sampler = nullptr;
     std::vector<class Particle*>    m_particles = std::vector<class Particle*>();
     class Random*                   m_random = nullptr;
+
+    //true, false or nothing?
+    bool m_numeric=true;
 };

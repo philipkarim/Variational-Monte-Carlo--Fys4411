@@ -32,29 +32,6 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
 
      //Calculating a simple gaussian function, looping over each particle
      //in each dimension.
-     /*
-     double r_tot=0.0, psi=1.0;
-     std::vector<double> r_pos;
-
-     for(int i=0; i<m_system->getNumberOfParticles(); i++){
-       r_pos=particles[i]->getPosition();
-       for (int dim=0; dim<m_system->getNumberOfDimensions(); dim++){
-         r_tot+=r_pos[dim]*r_pos[dim];
-
-       }
-       psi*=exp(-m_parameters[0]*r_tot);
-     }
-    return psi;
-}
-    */
-//
-
-  /*
-  //cout << dimensions_length;
-  for(int i=0; i<dimensions_length.size(); ++i){
-    cout << dimensions_length[i] << ' ';
-  }
-*/
 
 // Newest
 

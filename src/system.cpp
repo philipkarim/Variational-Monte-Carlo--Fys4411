@@ -15,22 +15,7 @@ System::System() {
 System::System(int seed) {
     m_random = new Random(seed);
 }
-/*
-//These three were removed with typos, not needed for brute force metro?
-void System::setPosition(const std::vector<double> &position) {
-    assert(position.size() == (unsigned int) m_numberOfDimensions);
-    m_position = position;
-}
 
-void System::adjustPosition(double change, int dimension) {
-    m_position.at(dimension) += change;
-}
-
-void System::setNumberOfDimensions(int numberOfDimensions) {
-    m_numberOfDimensions = numberOfDimensions;
-}
-*/
-//_______________
 
 bool System::metropolisStep() {
     /* Perform the actual Metropolis step: Choose a particle at random and
@@ -43,7 +28,8 @@ bool System::metropolisStep() {
 
      int random_index=0;
      double psi_factor;
-     double wfold=m_stepLength;
+     double wfold=m_waveFunction->evaluate(m_particles);
+     //double wfold=m_stepLength;
      std::vector<double> PositionOld=std::vector<double>();
 
      //Random integer generator
@@ -104,6 +90,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          if (i>=numberOfMetropolisSteps*m_equilibrationFraction){
             m_sampler->sample(acceptedStep);
          }
+
     }
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
@@ -137,4 +124,8 @@ void System::setWaveFunction(WaveFunction* waveFunction) {
 
 void System::setInitialState(InitialState* initialState) {
     m_initialState = initialState;
+}
+
+void System::setNumeric(bool numeric) {
+    m_numeric = numeric;
 }

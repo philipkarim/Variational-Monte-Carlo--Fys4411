@@ -9,7 +9,7 @@
 using std::cout;
 using std::endl;
 
-HarmonicOscillator::HarmonicOscillator(System* system, double omega, double alpha) :
+HarmonicOscillator::HarmonicOscillator(System* system, double omega) :
         Hamiltonian(system) {
     assert(omega > 0);
     m_omega  = omega;
@@ -28,17 +28,13 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
 
     double r2, r_tot, derivate2, potentialEnergyPart=0;
     double x_part, y_part, z_part;
-    std::vector<double> r_pos;
     double potentialEnergy = 0;
     double kineticEnergy   = 0;
     double wf=m_system->getWaveFunction()->evaluate(particles);
-    //double wf=evaluate(particles);
+    std::vector<double> r_pos;
 
     //Computing the kinetic energy
-
-    //Might want to remove the 0.5 or atleast move it to simple gaussian cdd
     kineticEnergy=m_system->getWaveFunction()->computeDoubleDerivative(particles);
-
 
     //Computing the potential energy (V_ext)
     std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
@@ -66,6 +62,8 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
       potentialEnergyPart+=(x_part+y_part+z_part);
     }
     potentialEnergy=0.5*potentialEnergyPart*m_omega*m_omega*wf;
+
+    cout<<m_system->getNumeric();
 
     return (kineticEnergy + potentialEnergy)/wf;
 

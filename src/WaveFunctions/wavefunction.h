@@ -15,4 +15,3 @@ protected:
     std::vector<double> m_parameters = std::vector<double>();
     class System* m_system = nullptr;
 };
-

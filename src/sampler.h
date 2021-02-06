@@ -8,11 +8,17 @@ public:
     void printOutputToTerminal();
     void computeAverages();
     double getEnergy()          { return m_energy; }
+    double getVariance()          { return m_variance; }
+    double getAcceptRatio()          { return m_acceptRatio; }
+
 
 private:
     int     m_numberOfMetropolisSteps = 0;
     int     m_stepNumber = 0;
     double  m_energy = 0;
     double  m_cumulativeEnergy = 0;
+    double  m_variance = 0;
+    double  m_acceptedSteps = 0;
+    double  m_acceptRatio = 0;
     class System* m_system = nullptr;
 };

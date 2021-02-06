@@ -24,6 +24,7 @@ void Sampler::sample(bool acceptedStep) {
     // Make sure the sampling variable(s) are initialized at the first step.
     if (m_stepNumber == 0) {
         m_cumulativeEnergy = 0;
+
     }
 
     /* Here you should sample all the interesting things you want to measure.
@@ -33,6 +34,11 @@ void Sampler::sample(bool acceptedStep) {
                          computeLocalEnergy(m_system->getParticles());
     m_cumulativeEnergy  += localEnergy;
     m_stepNumber++;
+
+    if (acceptedStep){
+        m_acceptedSteps++;
+    }
+
 }
 
 void Sampler::printOutputToTerminal() {
@@ -58,6 +64,8 @@ void Sampler::printOutputToTerminal() {
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Energy : " << m_energy << endl;
+    cout << " Variance : " << m_variance << endl;
+    cout << " Accepted step ratio : " << m_acceptRatio << endl;
     cout << endl;
 }
 
@@ -65,5 +73,14 @@ void Sampler::computeAverages() {
     /* Compute the averages of the sampled quantities. You need to think
      * thoroughly through what is written here currently; is this correct?
      */
-    m_energy = m_cumulativeEnergy / m_system->getNumberOfMetropolisSteps();
+    double steps_min_eq=(m_system->getNumberOfMetropolisSteps()*(1-m_system->getEquilibrationFraction()));
+    m_energy = m_cumulativeEnergy / steps_min_eq;
+    //minus 1?
+    //m_stddeviation =sqrt( /m_system->getNumberOfMetropolisSteps()-1);
+    //These two are wrong?
+    m_variance = m_cumulativeEnergy*m_energy-m_energy*m_energy;
+    m_acceptRatio = m_acceptedSteps / steps_min_eq;
+
+
+
 }
