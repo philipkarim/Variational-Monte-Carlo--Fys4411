@@ -63,8 +63,6 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
     }
     potentialEnergy=0.5*potentialEnergyPart*m_omega*m_omega*wf;
 
-    cout<<m_system->getNumeric();
-
     return (kineticEnergy + potentialEnergy)/wf;
 
 }

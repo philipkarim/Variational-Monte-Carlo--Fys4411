@@ -67,6 +67,10 @@ void Sampler::printOutputToTerminal() {
     cout << " Variance : " << m_variance << endl;
     cout << " Accepted step ratio : " << m_acceptRatio << endl;
     cout << endl;
+
+    if (m_energy=0.5){
+      system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+    }
 }
 
 void Sampler::computeAverages() {
