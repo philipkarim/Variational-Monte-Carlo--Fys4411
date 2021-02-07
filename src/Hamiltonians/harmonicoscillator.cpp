@@ -26,15 +26,23 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
      * m_system->getWaveFunction()...
      */
 
-    double r2, r_tot, derivate2, potentialEnergyPart=0;
+    double potentialEnergyPart=0;
     double x_part, y_part, z_part;
     double potentialEnergy = 0;
     double kineticEnergy   = 0;
     double wf=m_system->getWaveFunction()->evaluate(particles);
     std::vector<double> r_pos;
 
+//    kineticEnergy=m_system->getWaveFunction()->computeDoubleDerivative(particles);
+
+
     //Computing the kinetic energy
-    kineticEnergy=m_system->getWaveFunction()->computeDoubleDerivative(particles);
+    if(m_system->getNumeric()==false){
+      kineticEnergy=m_system->getWaveFunction()->computeDoubleDerivative(particles);
+    }
+    else if(m_system->getNumeric()==true){
+      kineticEnergy=m_system->getHamiltonian()->computeDoubleDerivativeNumeric(particles);
+    }
 
     //Computing the potential energy (V_ext)
     std::vector<int> dimensions_length(m_system->getNumberOfDimensions());

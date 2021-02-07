@@ -84,7 +84,7 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
     return g_func;
 }
 
-//
+//Analytical differentiation
 double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> particles) {
     /* All wave functions need to implement this function, so you need to
      * find the double derivative analytically. Note that by double derivative,
@@ -101,36 +101,38 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
 
      // For non-interacting particles
      std::vector<double> r_pos;
-     //Might try
-     //double wf=->getWaveFunction();
      double wf=evaluate(particles);
-     double derivate2=0, r_tot=0;
+     double derivate2=0;
      double x_lap, y_lap, z_lap;
      std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
      std::iota(dimensions_length.begin(), dimensions_length.end(), 0);
 
-     for(int i=0; i<m_system->getNumberOfParticles(); i++){
-       r_pos=particles[i]->getPosition();
+     //Analytically differentiatian
+     //if(m_system->getNumeric()==false){
 
-       if (dimensions_length.size()==3){
-         x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
-         y_lap=(2*m_parameters[0]*r_pos[1]*r_pos[1]-1);
-         z_lap=m_parameters[1]*(2*m_parameters[0]*m_parameters[1]*r_pos[2]*r_pos[2]-1);
-       }
-       else if(dimensions_length.size()==2){
-         x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
-         y_lap=(2*m_parameters[0]*r_pos[1]*r_pos[1]-1);
-         z_lap=0;
-       }
-       else {
-         x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
-         y_lap=0;
-         z_lap=0;
+       for(int i=0; i<m_system->getNumberOfParticles(); i++){
+         r_pos=particles[i]->getPosition();
+
+         if (dimensions_length.size()==3){
+           x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
+           y_lap=(2*m_parameters[0]*r_pos[1]*r_pos[1]-1);
+           z_lap=m_parameters[1]*(2*m_parameters[0]*m_parameters[1]*r_pos[2]*r_pos[2]-1);
+         }
+         else if(dimensions_length.size()==2){
+           x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
+           y_lap=(2*m_parameters[0]*r_pos[1]*r_pos[1]-1);
+           z_lap=0;
+         }
+         else {
+           x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
+           y_lap=0;
+           z_lap=0;
+         }
+
+         derivate2+=(x_lap+y_lap+z_lap);
        }
 
-       derivate2+=(x_lap+y_lap+z_lap);
-     }
+      return -derivate2*wf*m_parameters[0];
+    //}
 
-     //Might be times 0.5 here check(2)
-    return -derivate2*wf*m_parameters[0];
 }

@@ -68,9 +68,13 @@ void Sampler::printOutputToTerminal() {
     cout << " Accepted step ratio : " << m_acceptRatio << endl;
     cout << endl;
 
-    if (m_energy=0.5){
+    //Casually setting the mood if the code works for 1 particle in 1 dimension
+    /*
+    double analytical_answer_1D_N_1=0.5;
+    if (m_energy=analytical_answer_1D_N_1){
       system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
     }
+*/
 }
 
 void Sampler::computeAverages() {

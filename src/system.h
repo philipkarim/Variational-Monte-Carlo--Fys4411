@@ -53,5 +53,5 @@ private:
     class Random*                   m_random = nullptr;
 
     //true, false or nothing?
-    bool m_numeric=true;
+    bool m_numeric;
 };

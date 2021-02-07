@@ -33,9 +33,11 @@ int main() {
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
+
+    system->setNumeric                  (numeric);
+
     system->runMetropolisSteps          (numberOfSteps);
 
-    system->setNumeric            (numeric);
 
     //system->setNumberOfParticles        (numeric)
 
