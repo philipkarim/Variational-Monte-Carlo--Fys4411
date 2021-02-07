@@ -14,19 +14,12 @@
 #include <ratio>
 #include <chrono>
 
-#include <cmath>
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <cstdlib>
-#include <random>
 #include <string>
 
 
 using namespace std::chrono;
 using std::cout;
 using std::endl;
-using std::string;
 using namespace std;
 
 
@@ -121,14 +114,64 @@ void Sampler::computeAverages() {
 }
 
 void Sampler::writeToFile(){
+  ofstream myfile;
+  string folderpart1, folderpart2;
 
-  char filename[0];
+  bool numeric2=false;
+  bool bruteforce=true;
+
+  if (bruteforce==true){
+    folderpart1="datadump/bruteforce/";
+  }
+  else {
+    folderpart1 ="datadump/importancesampling/";
+  }
+  if (numeric2==true){
+    folderpart2="numeric/setalpha/";
+  }
+  else {
+    folderpart2 ="analytic/setalpha/";
+  }
+  int parti= m_system->getNumberOfParticles();
+  int dimen= m_system->getNumberOfDimensions();
+  //fix to make alpha and numeric global
+  double alph= 0.5;
+  //std::setprecision(2);
+  //cout<<folder;
+  //cout<<std::setprecision(2)<<alph;
+  std::string filename=folderpart1+folderpart2+"N="+std::to_string(parti)+"Dim="+std::to_string(dimen);
+  //<<filename;
   //filename='Data/Processing';
-  sprintf(filename, "tekst/test.txt");
-  ofstream file_T(filename);
-  file_T.open(filename);
-  file_T<<m_energy;
-  file_T.close();
+  myfile.open(filename);
+  myfile<< "Particles= " << parti << endl;
+  myfile<< "Dimensions= "<<dimen<<endl;
+  myfile<< "Energy= "<<m_energy<<endl;
+  myfile<< "Alpha= "<<alph<<endl;
+
+  myfile.close();
+
+
+/*
+
+  cout << "  -- System info -- " << endl;
+  cout << " Number of particles  : " << np << endl;
+  cout << " Number of dimensions : " << nd << endl;
+  cout << " Number of Metropolis steps run : 10^" << std::log10(ms) << endl;
+  cout << " Number of equilibration steps  : 10^" << std::log10(std::round(ms*ef)) << endl;
+  cout << endl;
+  cout << "  -- Wave function parameters -- " << endl;
+  cout << " Number of parameters : " << p << endl;
+  for (int i=0; i < p; i++) {
+      cout << " Parameter " << i+1 << " : " << pa.at(i) << endl;
+  }
+  cout << endl;
+  cout << "  -- Results -- " << endl;
+  cout << " CPU time: " << time_sec << " s" << endl;
+  cout << " Energy : " << m_energy << endl;
+  cout << " Variance : " << m_variance << endl;
+  cout << " Accepted step ratio : " << m_acceptRatio << endl;
+
+*/
 
 /*
   char name2;
