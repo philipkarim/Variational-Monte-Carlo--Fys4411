@@ -7,7 +7,6 @@
 #include "InitialStates/initialstate.h"
 #include "Math/random.h"
 
-
 System::System() {
     m_random = new Random();
 }
@@ -92,8 +91,10 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          }
 
     }
+
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
+    m_sampler->writeToFile();
 }
 
 void System::setNumberOfParticles(int numberOfParticles) {

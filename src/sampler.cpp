@@ -7,8 +7,27 @@
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
 
+//Write to file modules
+#include <fstream>
+//Modulesto meassure the cpu time
+#include <ctime>
+#include <ratio>
+#include <chrono>
+
+#include <cmath>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <cstdlib>
+#include <random>
+#include <string>
+
+
+using namespace std::chrono;
 using std::cout;
 using std::endl;
+using std::string;
+using namespace std;
 
 
 Sampler::Sampler(System* system) {
@@ -24,14 +43,23 @@ void Sampler::sample(bool acceptedStep) {
     // Make sure the sampling variable(s) are initialized at the first step.
     if (m_stepNumber == 0) {
         m_cumulativeEnergy = 0;
+        time_sec =0;
 
     }
+    //Starting the clock
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
     /* Here you should sample all the interesting things you want to measure.
      * Note that there are (way) more than the single one here currently.
      */
     double localEnergy = m_system->getHamiltonian()->
                          computeLocalEnergy(m_system->getParticles());
+
+   //Stopping the clock, adding the time together for each energy cycle
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+	  duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+    time_sec += time_span.count();
+
     m_cumulativeEnergy  += localEnergy;
     m_stepNumber++;
 
@@ -63,6 +91,7 @@ void Sampler::printOutputToTerminal() {
     }
     cout << endl;
     cout << "  -- Results -- " << endl;
+    cout << " CPU time: " << time_sec << " s" << endl;
     cout << " Energy : " << m_energy << endl;
     cout << " Variance : " << m_variance << endl;
     cout << " Accepted step ratio : " << m_acceptRatio << endl;
@@ -74,7 +103,7 @@ void Sampler::printOutputToTerminal() {
     if (m_energy=analytical_answer_1D_N_1){
       system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
     }
-*/
+    */
 }
 
 void Sampler::computeAverages() {
@@ -89,6 +118,15 @@ void Sampler::computeAverages() {
     m_variance = m_cumulativeEnergy*m_energy-m_energy*m_energy;
     m_acceptRatio = m_acceptedSteps / steps_min_eq;
 
+}
+
+void Sampler::writeToFile(){
+  char filename[0];
+  //filename='Data/Processing';
+  sprintf(filename, "Data/Processing", "test.txt");
+  ofstream file_T(filename);
+  file_T<<m_energy;
+  file_T.close();
 
 
 }
