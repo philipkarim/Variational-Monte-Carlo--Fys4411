@@ -121,12 +121,21 @@ void Sampler::computeAverages() {
 }
 
 void Sampler::writeToFile(){
+
   char filename[0];
   //filename='Data/Processing';
-  sprintf(filename, "Data/Processing", "test.txt");
+  sprintf(filename, "tekst/test.txt");
   ofstream file_T(filename);
+  file_T.open(filename);
   file_T<<m_energy;
   file_T.close();
 
-
+/*
+  char name2;
+  name2=m_energy;
+  ofstream myfile;
+  myfile.open("datadump/test"+ name2+".txt");
+  myfile << m_energy;
+  myfile.close();
+*/
 }
