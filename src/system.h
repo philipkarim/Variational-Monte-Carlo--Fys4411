@@ -39,8 +39,8 @@ public:
 
     void setBruteforce                  (bool numeric);
     bool getBruteforce()                {return m_bruteforce;}
-    void setAlpha                       (double alpha);
-    double getAlpha()                   {return m_alpha;}
+    void setTimeStep                    (double timeStep);
+    double getTimeStep()                {return m_timeStep;}
     //bool getNumeric()          { return m_numeric; }
 
 
@@ -61,5 +61,5 @@ private:
     //true, false or nothing?
     bool m_numeric;
     bool m_bruteforce;
-    double m_alpha;
+    double m_timeStep;
 };

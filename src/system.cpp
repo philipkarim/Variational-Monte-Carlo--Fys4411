@@ -51,6 +51,9 @@ bool System::metropolisStep() {
 
      //Start the step which gives movement of the particle
      for (int dim=0; dim<m_numberOfDimensions; dim++){
+       //Try moving this random thing in the forloop
+       //double temp_rand=UniformNumberGenerator(gen);
+       //double step=m_stepLength*(temp_rand-0.5);
        m_particles[random_index]->adjustPosition(step, dim);
      }
 
@@ -72,32 +75,77 @@ bool System::metropolisStep() {
 
 
 bool System::metropolisStepImportanceSampling() {
-    /* Perform the actual Metropolis step: Choose a particle at random and
-     * change it's position by a random amount, and check if the step is
-     * accepted by the Metropolis test (compare the wave function evaluated
-     * at this new position with the one at the old position).
-     */
+    //_________Importance sampling_____________
 
-     //_________BRUTE FORCE_____________
+    //Declaring vaiables to be used:
+    double part_1, part_2, green_factor, step, greenRate=0;
+    //double TS=m_system->getTimeStep();
+    //Defining position and quantum force vectors
+    //to be used in the importance sampling
+    std::vector<double> PositionOld=std::vector<double>();
+    std::vector<double> QFOld=std::vector<double>();
+    std::vector<double> PositionNew=std::vector<double>();
+    std::vector<double> QFNew=std::vector<double>();
 
-     int random_index;
-     double psi_factor;
-     double wfold=m_waveFunction->evaluate(m_particles);
-     //double wfold=m_stepLength;
-     std::vector<double> PositionOld=std::vector<double>();
+    //Random integer generator
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+    std::uniform_int_distribution<int> distribution(0,m_numberOfParticles-1);
+    std::uniform_real_distribution<double> UniformNumberGenerator(0.0,1.0);
+    std::normal_distribution<double> Normaldistribution(0.0,1.0);
 
-     //Random integer generator
-     std::random_device rd;
-     std::mt19937_64 gen(rd());
-     std::uniform_int_distribution<int> distribution(0,m_numberOfParticles-1);
-     std::uniform_real_distribution<double> UniformNumberGenerator(0.0,1.0);
+    double rand_norm  =Normaldistribution(gen);
+    double random_dist=UniformNumberGenerator(gen);
+    //Random index used to choose a random particle
+    int random_index  =distribution(gen);
 
-     //Random index used to choose a random particle
-     random_index=distribution(gen);
-     //Defining the random particle:
-
-
+    //Defining the values of the previous position
+    double wfold=m_waveFunction->evaluate(m_particles);
     PositionOld=m_particles[random_index]->getPosition();
+    QFOld=m_waveFunction->computeQuantumForce(PositionOld);
+
+    for (int dim=0; dim<m_numberOfDimensions; dim++){
+        step=QFOld[dim]*m_timeStep*0.5 + sqrt(m_timeStep)*rand_norm;
+        m_particles[random_index]->adjustPosition(step, dim);
+    }
+
+    // Evaluate new quantities
+    double wfnew = m_waveFunction->evaluate(m_particles);
+    PositionNew=m_particles[random_index]->getPosition();
+    QFNew=m_waveFunction->computeQuantumForce(PositionNew);
+
+    // Compute greens function
+    for (int dim=0; dim<m_numberOfDimensions; dim++){
+        part_1=PositionOld[dim]-PositionNew[dim]-0.5*m_timeStep*QFNew[dim];
+        part_2=PositionNew[dim]-PositionOld[dim]-0.5*m_timeStep*QFOld[dim];
+        greenRate+=(part_2*part_2)-(part_1*part_1);
+    }
+    greenRate = exp(greenRate/(2*m_timeStep));
+    green_factor = greenRate*wfnew*wfnew/(wfold*wfold);
+
+    // Check if the step is accepted
+    if (random_dist <= green_factor) {
+        wfold = wfnew;
+        return true;
+    }
+    else {
+        m_particles[random_index]->setPosition(PositionOld);
+        return false;
+    }
+
+
+    //Extracting the new wavefunction, and checks if it is accepted
+/*
+
+
+    for (int cycles = 1; cycles <= NumberMCsamples; cycles++){
+   // new position
+   for (int i = 0; i < NumberParticles; i++) {
+     for (int j = 0; j < Dimension; j++) {
+       // gaussian deviate to compute new positions using a given timestep
+       NewPosition(i,j) = OldPosition(i,j) + Normaldistribution(gen)*sqrt(timestep)+OldQuantumForce(i,j)*timestep*D;
+
+     }}}
 
      //Choosing a random step:
      double temp_rand=UniformNumberGenerator(gen);
@@ -122,6 +170,8 @@ bool System::metropolisStepImportanceSampling() {
          m_particles[random_index]->setPosition(PositionOld);
         return false;
       }
+
+*/
 }
 
 void System::runMetropolisSteps(int numberOfMetropolisSteps) {
@@ -195,6 +245,6 @@ void System::setBruteforce(bool bruteforce_val) {
     m_bruteforce = bruteforce_val;
 }
 
-void System::setAlpha(double alpha) {
-    m_alpha= alpha;
+void System::setTimeStep(double timeStep) {
+    m_timeStep= timeStep;
 }

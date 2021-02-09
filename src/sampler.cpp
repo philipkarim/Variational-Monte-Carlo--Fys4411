@@ -36,6 +36,7 @@ void Sampler::sample(bool acceptedStep) {
     // Make sure the sampling variable(s) are initialized at the first step.
     if (m_stepNumber == 0) {
         m_cumulativeEnergy = 0;
+        m_cumulativeEnergy2 = 0;
         time_sec =0;
 
     }
@@ -53,8 +54,11 @@ void Sampler::sample(bool acceptedStep) {
 	  duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
     time_sec += time_span.count();
 
+    energy_vec.push_back(localEnergy);
     m_cumulativeEnergy  += localEnergy;
     m_stepNumber++;
+
+    m_cumulativeEnergy2+=(localEnergy*localEnergy);
 
     if (acceptedStep){
         m_acceptedSteps++;
@@ -91,13 +95,13 @@ void Sampler::printOutputToTerminal() {
     cout << endl;
 
     //Casually setting the mood if the code works for 1 particle in 1 dimension
-
+/*
     double analytical_answer_1D_N_1=0.5;
     if (m_energy==analytical_answer_1D_N_1){
-      //system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-      system("open http://www.youtube.com/watch?v=Gs069dndIYk&t=0m50s");
+      system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+      //system("open http://www.youtube.com/watch?v=Gs069dndIYk&t=0m50s");
     }
-
+*/
 }
 
 void Sampler::computeAverages() {
@@ -106,11 +110,26 @@ void Sampler::computeAverages() {
      */
     double steps_min_eq=(m_system->getNumberOfMetropolisSteps()*(1-m_system->getEquilibrationFraction()));
     m_energy = m_cumulativeEnergy / steps_min_eq;
+    m_cumulativeEnergy2 =m_cumulativeEnergy2/ steps_min_eq;
+    m_variance=m_cumulativeEnergy2-(m_energy*m_energy);
+
     //minus 1?
     //m_stddeviation =sqrt( /m_system->getNumberOfMetropolisSteps()-1);
     //These two are wrong?
-    m_variance = m_cumulativeEnergy*m_energy-m_energy*m_energy;
-    m_acceptRatio = m_acceptedSteps / steps_min_eq;
+    //m_variance = (m_cumulativeEnergy*m_energy-m_energy*m_energy)/m_system->getNumberOfMetropolisSteps();;
+    //m_variance = computeVariance(energy_vec, m_energy);
+    m_acceptRatio = m_acceptedSteps / m_system->getNumberOfMetropolisSteps();//steps_min_eq;
+
+}
+
+double Sampler::computeVariance(std::vector<double> x_sample, double x_mean){
+    double var_sum=0;
+    for (int i; i<m_acceptedSteps; i++){
+        var_sum+=pow((x_sample[i]-x_mean),2);
+    }
+    cout<<x_sample.size();
+    return var_sum/(x_sample.size()-1);
+
 
 }
 
@@ -134,7 +153,9 @@ void Sampler::writeToFile(){
 
   int parti= m_system->getNumberOfParticles();
   int dimen= m_system->getNumberOfDimensions();
-  double alphi=m_system->getAlpha();
+  //double alphi=m_system->getAlpha();
+  std::vector<double> pa2 = m_system->getWaveFunction()->getParameters();
+
   //fix to make alpha and numeric global
 
   std::string filename=folderpart1+folderpart2+"N="+std::to_string(parti)+"Dim="+std::to_string(dimen);
@@ -143,7 +164,7 @@ void Sampler::writeToFile(){
   myfile<< "Particles= " << parti << endl;
   myfile<< "Dimensions= "<<dimen<<endl;
   myfile<< "Energy= "<<m_energy<<endl;
-  myfile<< "Alpha= "<<alphi<<endl;
+  myfile<< "Alpha= "<<pa2.at(0)<<endl;
   myfile<< "Variance= "<<m_variance<<endl;
   myfile<< "AcceptanceRatio= "<<m_acceptRatio<<endl;
 
@@ -181,4 +202,7 @@ void Sampler::writeToFile(){
   myfile << m_energy;
   myfile.close();
 */
+
+
+
 }

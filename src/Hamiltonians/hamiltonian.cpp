@@ -29,7 +29,7 @@ for (int i = 0; i<m_system->getNumberOfParticles(); i++){
         wfprev = m_system->getWaveFunction()->evaluate(particles);
         // The position now
         particles[i]->adjustPosition(h, dim);
-        
+
         derivate2 -= (wfnext+wfprev-2*wf)/h2;
     }
 }

@@ -136,3 +136,36 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
     //}
 
 }
+
+
+std::vector<double> SimpleGaussian::computeQuantumForce (std::vector<double> particles){
+    //Returns a vector consisting of up to 3 particles
+    //Only for spherical without correlation
+    //double QF=0;
+
+    double x_i=particles[0];
+    double y_i=particles[1];
+    double z_i=particles[2];
+
+    std::vector<double> QF_vec =  std::vector<double>();
+    std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
+    std::iota(dimensions_length.begin(), dimensions_length.end(), 0);
+
+    if (dimensions_length.size()==3){
+      QF_vec.push_back(-4*x_i*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
+      QF_vec.push_back(-4*y_i*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
+      QF_vec.push_back(-4*z_i*m_parameters[1]*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
+    }
+    else if(dimensions_length.size()==2){
+      QF_vec.push_back(-4*x_i*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
+      QF_vec.push_back(-4*y_i*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
+      z_i=0;
+    }
+    else {
+      QF_vec.push_back(-4*x_i*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
+      y_i=0;
+      z_i=0;
+    }
+
+    return QF_vec;
+}
