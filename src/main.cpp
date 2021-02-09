@@ -17,15 +17,16 @@ int main() {
     int seed = 2020;
 
     //Dim=1, particle=1 should give 0.5
-    int numberOfDimensions  = 2;
+    int numberOfDimensions  = 1;
     int numberOfParticles   = 1;
-    int numberOfSteps       = (int) 1e6;
+    int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
     double alpha            = 0.5;          // Variational parameter.
     double beta             = 1;
-    double stepLength       = 0.1;          // Metropolis step length.
+    double stepLength       = 1;          // Metropolis step length.
     double equilibration    = 0.1;          // Amount of the total steps used for equilibration.
-    bool numeric            = true;         // Use numeric derivation? =true
+    bool numeric            = false;         // True->Numeric differentiation, False->Analytic
+    bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
 
     System* system = new System(seed);
     system->setHamiltonian              (new HarmonicOscillator(system, omega));  //Added alpha
@@ -33,8 +34,9 @@ int main() {
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
-
     system->setNumeric                  (numeric);
+    system->setBruteforce               (bruteforce_val);
+    system->setAlpha                    (alpha);
 
     system->runMetropolisSteps          (numberOfSteps);
 

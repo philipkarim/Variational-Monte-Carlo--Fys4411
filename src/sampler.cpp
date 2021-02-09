@@ -91,12 +91,13 @@ void Sampler::printOutputToTerminal() {
     cout << endl;
 
     //Casually setting the mood if the code works for 1 particle in 1 dimension
-    /*
+
     double analytical_answer_1D_N_1=0.5;
-    if (m_energy=analytical_answer_1D_N_1){
-      system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+    if (m_energy==analytical_answer_1D_N_1){
+      //system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+      system("open http://www.youtube.com/watch?v=Gs069dndIYk&t=0m50s");
     }
-    */
+
 }
 
 void Sampler::computeAverages() {
@@ -117,36 +118,35 @@ void Sampler::writeToFile(){
   ofstream myfile;
   string folderpart1, folderpart2;
 
-  bool numeric2=false;
-  bool bruteforce=true;
-
-  if (bruteforce==true){
+  if (m_system->getBruteforce()==true){
     folderpart1="datadump/bruteforce/";
   }
   else {
     folderpart1 ="datadump/importancesampling/";
   }
-  if (numeric2==true){
+
+  if (m_system->getNumeric()==true){
     folderpart2="numeric/setalpha/";
   }
   else {
     folderpart2 ="analytic/setalpha/";
   }
+
   int parti= m_system->getNumberOfParticles();
   int dimen= m_system->getNumberOfDimensions();
+  double alphi=m_system->getAlpha();
   //fix to make alpha and numeric global
-  double alph= 0.5;
-  //std::setprecision(2);
-  //cout<<folder;
-  //cout<<std::setprecision(2)<<alph;
+
   std::string filename=folderpart1+folderpart2+"N="+std::to_string(parti)+"Dim="+std::to_string(dimen);
-  //<<filename;
-  //filename='Data/Processing';
+
   myfile.open(filename);
   myfile<< "Particles= " << parti << endl;
   myfile<< "Dimensions= "<<dimen<<endl;
   myfile<< "Energy= "<<m_energy<<endl;
-  myfile<< "Alpha= "<<alph<<endl;
+  myfile<< "Alpha= "<<alphi<<endl;
+  myfile<< "Variance= "<<m_variance<<endl;
+  myfile<< "AcceptanceRatio= "<<m_acceptRatio<<endl;
+
 
   myfile.close();
 

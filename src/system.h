@@ -15,6 +15,7 @@ public:
     */
     //
     bool metropolisStep             ();
+    bool metropolisStepImportanceSampling();
     void runMetropolisSteps         (int numberOfMetropolisSteps);
     void setNumberOfParticles       (int numberOfParticles);
     void setNumberOfDimensions      (int numberOfDimensions);
@@ -33,8 +34,13 @@ public:
     int getNumberOfMetropolisSteps()    { return m_numberOfMetropolisSteps; }
     double getEquilibrationFraction()   { return m_equilibrationFraction; }
 
-    void setNumeric                 (bool numeric);
+    void setNumeric                     (bool numeric);
     bool getNumeric()                   { return m_numeric; }
+
+    void setBruteforce                  (bool numeric);
+    bool getBruteforce()                {return m_bruteforce;}
+    void setAlpha                       (double alpha);
+    double getAlpha()                   {return m_alpha;}
     //bool getNumeric()          { return m_numeric; }
 
 
@@ -54,4 +60,6 @@ private:
 
     //true, false or nothing?
     bool m_numeric;
+    bool m_bruteforce;
+    double m_alpha;
 };

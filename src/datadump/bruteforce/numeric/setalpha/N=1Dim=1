@@ -1,4 +1,6 @@
 Particles= 1
 Dimensions= 1
-Energy= 0.499977
-Alpha= 0.5
+Energy= -44.6486
+Alpha= 0.6
+Variance= 1.79415e+09
+AcceptanceRatio= 0.99865

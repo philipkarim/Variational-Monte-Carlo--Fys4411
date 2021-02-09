@@ -6,6 +6,7 @@
 #include "Hamiltonians/hamiltonian.h"
 #include "InitialStates/initialstate.h"
 #include "Math/random.h"
+#include <iostream>
 
 System::System() {
     m_random = new Random();
@@ -25,7 +26,7 @@ bool System::metropolisStep() {
 
      //_________BRUTE FORCE_____________
 
-     int random_index=0;
+     int random_index;
      double psi_factor;
      double wfold=m_waveFunction->evaluate(m_particles);
      //double wfold=m_stepLength;
@@ -39,7 +40,6 @@ bool System::metropolisStep() {
 
      //Random index used to choose a random particle
      random_index=distribution(gen);
-
      //Defining the random particle:
 
 
@@ -53,6 +53,62 @@ bool System::metropolisStep() {
      for (int dim=0; dim<m_numberOfDimensions; dim++){
        m_particles[random_index]->adjustPosition(step, dim);
      }
+
+     //std::cout << wfold<<std::endl;
+
+     //Extracting the new wavefunction, and checks if it is accepted
+     double wfnew=m_waveFunction->evaluate(m_particles);
+     psi_factor=wfnew*wfnew/(wfold*wfold);
+     //If accepted:
+     if (temp_rand<=psi_factor){
+        wfold=wfnew;
+        return true;
+     }
+     else{
+         m_particles[random_index]->setPosition(PositionOld);
+        return false;
+      }
+}
+
+
+bool System::metropolisStepImportanceSampling() {
+    /* Perform the actual Metropolis step: Choose a particle at random and
+     * change it's position by a random amount, and check if the step is
+     * accepted by the Metropolis test (compare the wave function evaluated
+     * at this new position with the one at the old position).
+     */
+
+     //_________BRUTE FORCE_____________
+
+     int random_index;
+     double psi_factor;
+     double wfold=m_waveFunction->evaluate(m_particles);
+     //double wfold=m_stepLength;
+     std::vector<double> PositionOld=std::vector<double>();
+
+     //Random integer generator
+     std::random_device rd;
+     std::mt19937_64 gen(rd());
+     std::uniform_int_distribution<int> distribution(0,m_numberOfParticles-1);
+     std::uniform_real_distribution<double> UniformNumberGenerator(0.0,1.0);
+
+     //Random index used to choose a random particle
+     random_index=distribution(gen);
+     //Defining the random particle:
+
+
+    PositionOld=m_particles[random_index]->getPosition();
+
+     //Choosing a random step:
+     double temp_rand=UniformNumberGenerator(gen);
+     double step=m_stepLength*(temp_rand-0.5);
+
+     //Start the step which gives movement of the particle
+     for (int dim=0; dim<m_numberOfDimensions; dim++){
+       m_particles[random_index]->adjustPosition(step, dim);
+     }
+
+     //std::cout << wfold<<std::endl;
 
      //Extracting the new wavefunction, and checks if it is accepted
      double wfnew=m_waveFunction->evaluate(m_particles);
@@ -73,9 +129,14 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     m_sampler                   = new Sampler(this);
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
-
+    bool acceptedStep;
     for (int i=0; i < numberOfMetropolisSteps; i++) {
-        bool acceptedStep = metropolisStep();
+      if (m_bruteforce==true){
+        acceptedStep = metropolisStep();
+      }
+      else{
+        acceptedStep = metropolisStepImportanceSampling();
+      }
 
         /* Here you should sample the energy (and maybe other things using
          * the m_sampler instance of the Sampler class. Make sure, though,
@@ -84,17 +145,16 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          * are equilibration steps; m_equilibrationFraction.
          */
 
-         //If statement to make send the accepted steps into the sampler
+         //If statement to send the accepted steps into the sampler
          //after the system is at rest
          if (i>=numberOfMetropolisSteps*m_equilibrationFraction){
             m_sampler->sample(acceptedStep);
          }
-
     }
 
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
-    m_sampler->writeToFile();
+    //m_sampler->writeToFile();
 }
 
 void System::setNumberOfParticles(int numberOfParticles) {
@@ -129,4 +189,12 @@ void System::setInitialState(InitialState* initialState) {
 
 void System::setNumeric(bool numeric) {
     m_numeric = numeric;
+}
+
+void System::setBruteforce(bool bruteforce_val) {
+    m_bruteforce = bruteforce_val;
+}
+
+void System::setAlpha(double alpha) {
+    m_alpha= alpha;
 }

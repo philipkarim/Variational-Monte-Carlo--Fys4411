@@ -32,6 +32,8 @@ void RandomUniform::setupInitialState() {
     std::mt19937_64 gen(rd());
 
     // Set up the distribution for x \in [[0, 1],(can use multiple configurations)
+    //std::normal_distribution<double> UniformNumberGenerator(0.0,1.0);
+
     std::uniform_real_distribution<double> UniformNumberGenerator(0.0,1.0);
     //std::normal_distribution<double> Normaldistribution(0.0,1.0);
 
@@ -53,11 +55,12 @@ void RandomUniform::setupInitialState() {
              * obviously NOT a good idea).
              */
              double temp_pos=(UniformNumberGenerator(gen) - 0.5);
+             //std::cout<<temp_pos;
              position.push_back(temp_pos);
         }
 
         m_particles.push_back(new Particle());
-        m_particles.at(i)->setNumberOfDimensions(m_numberOfDimensions);
-        m_particles.at(i)->setPosition(position);
+        m_particles[i]->setNumberOfDimensions(m_numberOfDimensions);
+        m_particles[i]->setPosition(position);
     }
 }
