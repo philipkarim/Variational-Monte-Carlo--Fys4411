@@ -207,6 +207,35 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     //m_sampler->writeToFile();
 }
 
+
+double System::gradientDecent(){
+
+    //Remember to put this in main and setting the alpha
+    //before running the main metropolis. Run for about 1000 steps
+    double alpha_next, alpha_curr, alpha_prev;
+    double El_deriv, El_deriv_prev;
+    double gamma_dir;
+    double epsilon;
+    int iterations=1000;
+
+    for(int ii=0, ii<iterations, i++){
+
+        El_deriv=localEnergyDerivative(alpha_curr);
+        El_deriv_prev=localEnergyDerivative(alpha_prev);
+
+        gamma_dir=(alpha_curr-alpha_prev+epsilon)/(El_deriv-El_deriv_prev);
+
+        alpha_next=alpha_curr-gamma_dir*(El_deriv);
+
+        alpha_prev=alpha_curr;
+        alpha_curr=alpha_next;
+    }
+
+
+    return alpha_curr;
+
+}
+
 void System::setNumberOfParticles(int numberOfParticles) {
     m_numberOfParticles = numberOfParticles;
 }
