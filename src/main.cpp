@@ -27,7 +27,7 @@ int main() {
     double stepLength       = 1;            // Metropolis step length.
     double equilibration    = 0.1;          // Amount of the total steps used for equilibration.
     bool numeric            = false;         // True->Numeric differentiation, False->Analytic
-    bool bruteforce_val     = false;         // True->bruteforce, False->Importance sampling
+    bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
 
     System* system = new System(seed);
     system->setHamiltonian              (new HarmonicOscillator(system, omega));  //Added alpha
@@ -40,7 +40,7 @@ int main() {
     system->setTimeStep                 (timeStep);
 
     system->runMetropolisSteps          (numberOfSteps);
-
+    system->gradientDecent();
 
     //system->setNumberOfParticles        (numeric)
 

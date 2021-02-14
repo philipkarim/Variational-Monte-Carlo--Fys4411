@@ -8,6 +8,9 @@
 #include "Math/random.h"
 #include <iostream>
 
+#include "WaveFunctions/simplegaussian.h"
+
+
 System::System() {
     m_random = new Random();
 }
@@ -216,20 +219,27 @@ double System::gradientDecent(){
     double alpha_prev=alpha_curr;  //Initial guess
 
     double alpha_next;
-    double El_deriv, El_deriv_prev;
+    double El_deriv2, El_deriv_prev;
     double gamma_dir;
     double epsilon;
 
-    int iterations=100;   //Not sure how many iterations to use, 50 or 500??
+    int iterations=10;   //Not sure how many iterations to use, 50 or 500??
+
+    double beta = getWaveFunction()->getParameters()[2]/getWaveFunction()->getParameters()[0];
 
     for(int ii=0; ii<iterations; ii++){
+        //std::vector<double> parameters(2);
+        //parameters[0] = alpha_curr;
+        //parameters[2] = alpha_curr*beta;
+        //Need to find a way to set the parameters public for each itteration
+        setWaveFunction(new SimpleGaussian(system,alpha_curr, beta));
 
-        El_deriv=E_LDerivative(alpha_curr);
+        El_deriv2=E_LDerivative(alpha_curr);
         El_deriv_prev=E_LDerivative(alpha_prev);
 
-        gamma_dir=(alpha_curr-alpha_prev+epsilon)/(El_deriv-El_deriv_prev);
+        gamma_dir=(alpha_curr-alpha_prev+epsilon)/(El_deriv2-El_deriv_prev);
 
-        alpha_next=alpha_curr-gamma_dir*(El_deriv);
+        alpha_next=alpha_curr-gamma_dir*(El_deriv2);
 
         alpha_prev=alpha_curr;
         alpha_curr=alpha_next;
@@ -244,6 +254,7 @@ double System::gradientDecent(){
 }
 
 double System::E_LDerivative(double alpha_n){
+    runMetropolisSteps(1000);
     double expectEnerg, expectE_L_deri, expectderi_dot_EL
                       =m_sampler->getGradientDecentValues();
 
@@ -251,8 +262,8 @@ double System::E_LDerivative(double alpha_n){
     double expectE_L_deriv     = expectE_L_deri/(m_numberOfMetropolisSteps);//*getEquilibrationFraction());
     double expectderiv_dot_EL = expectderi_dot_EL/(m_numberOfMetropolisSteps);//*getEquilibrationFraction());
 
-    double E_L_deriv=2*(expectderiv_dot_EL - expectEnergy*expectE_L_deriv)/m_equilibrationFraction;
-    return  E_L_deriv;
+    double E_L_derive=2*(expectderiv_dot_EL - expectEnergy*expectE_L_deriv)/m_equilibrationFraction;
+    return  E_L_derive;
 }
 
 void System::setNumberOfParticles(int numberOfParticles) {
