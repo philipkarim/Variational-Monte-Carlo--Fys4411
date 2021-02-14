@@ -231,10 +231,16 @@ double System::gradientDecent(){
         alpha_curr=alpha_next;
     }
 
+    //To compute the local energy derivative, write a function that runs the
+    //runmetropolisstep function and returns the derivative function of local energy.
+
+
 
     return alpha_curr;
 
 }
+
+void System::com
 
 void System::setNumberOfParticles(int numberOfParticles) {
     m_numberOfParticles = numberOfParticles;
