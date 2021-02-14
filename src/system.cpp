@@ -212,16 +212,20 @@ double System::gradientDecent(){
 
     //Remember to put this in main and setting the alpha
     //before running the main metropolis. Run for about 1000 steps
-    double alpha_next, alpha_curr, alpha_prev;
+    double alpha_curr=0.45;
+    double alpha_prev=alpha_curr;  //Initial guess
+
+    double alpha_next;
     double El_deriv, El_deriv_prev;
     double gamma_dir;
     double epsilon;
-    int iterations=1000;
 
-    for(int ii=0, ii<iterations, i++){
+    int iterations=100;   //Not sure how many iterations to use, 50 or 500??
 
-        El_deriv=localEnergyDerivative(alpha_curr);
-        El_deriv_prev=localEnergyDerivative(alpha_prev);
+    for(int ii=0; ii<iterations; ii++){
+
+        El_deriv=E_LDerivative(alpha_curr);
+        El_deriv_prev=E_LDerivative(alpha_prev);
 
         gamma_dir=(alpha_curr-alpha_prev+epsilon)/(El_deriv-El_deriv_prev);
 
@@ -235,12 +239,21 @@ double System::gradientDecent(){
     //runmetropolisstep function and returns the derivative function of local energy.
 
 
-
     return alpha_curr;
 
 }
 
-void System::com
+double System::E_LDerivative(double alpha_n){
+    double expectEnerg, expectE_L_deri, expectderi_dot_EL
+                      =m_sampler->getGradientDecentValues();
+
+    double expectEnergy    = expectEnerg/(m_numberOfMetropolisSteps);//*getEquilibrationFraction());
+    double expectE_L_deriv     = expectE_L_deri/(m_numberOfMetropolisSteps);//*getEquilibrationFraction());
+    double expectderiv_dot_EL = expectderi_dot_EL/(m_numberOfMetropolisSteps);//*getEquilibrationFraction());
+
+    double E_L_deriv=2*(expectderiv_dot_EL - expectEnergy*expectE_L_deriv)/m_equilibrationFraction;
+    return  E_L_deriv;
+}
 
 void System::setNumberOfParticles(int numberOfParticles) {
     m_numberOfParticles = numberOfParticles;

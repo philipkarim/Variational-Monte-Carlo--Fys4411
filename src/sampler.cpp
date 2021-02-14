@@ -38,6 +38,8 @@ void Sampler::sample(bool acceptedStep) {
         m_cumulativeEnergy = 0;
         m_cumulativeEnergy2 = 0;
         time_sec =0;
+        m_cumulativeE_Lderiv=0;
+        m_cumulativeE_Lderiv_expect=0;
 
     }
     //Starting the clock
@@ -46,6 +48,7 @@ void Sampler::sample(bool acceptedStep) {
     /* Here you should sample all the interesting things you want to measure.
      * Note that there are (way) more than the single one here currently.
      */
+    double E_L_deriv=0;
     double localEnergy = m_system->getHamiltonian()->
                          computeLocalEnergy(m_system->getParticles());
 
@@ -54,11 +57,29 @@ void Sampler::sample(bool acceptedStep) {
 	  duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
     time_sec += time_span.count();
 
+    //making an energy vector in search of the correct variance
     energy_vec.push_back(localEnergy);
+    double beta=1;
+    //Just to check if it works, put inro a separate function
+    for (int i=0; i<m_system->getNumberOfParticles(); i++){
+        for (int d=0; d<m_system->getNumberOfDimensions()-1; d++){
+            E_L_deriv -= m_system->getParticles().at(i)->getPosition()[d]*m_system->getParticles().at(i)->getPosition()[d];
+        }
+        int d = m_system->getNumberOfDimensions()-1;
+        E_L_deriv -= m_system->getParticles().at(i)->getPosition()[d]*m_system->getParticles().at(i)->getPosition()[d]*beta;
+    }
+
+
+
     m_cumulativeEnergy  += localEnergy;
     m_stepNumber++;
 
+    //Used in variance
     m_cumulativeEnergy2+=(localEnergy*localEnergy);
+
+    //Used in the gradient decent calculations
+    m_cumulativeE_Lderiv+=E_L_deriv;
+    m_cumulativeE_Lderiv_expect+=E_L_deriv*localEnergy;
 
     if (acceptedStep){
         m_acceptedSteps++;

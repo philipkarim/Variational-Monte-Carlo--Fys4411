@@ -13,6 +13,9 @@ public:
     double getVariance()          { return m_variance; }
     double getAcceptRatio()          { return m_acceptRatio; }
 
+    double getGradientDecentValues()        { return m_cumulativeEnergy, m_cumulativeE_Lderiv, m_cumulativeE_Lderiv_expect; }
+
+
 
 private:
     int     m_numberOfMetropolisSteps = 0;
@@ -24,6 +27,9 @@ private:
     double  m_acceptedSteps = 0;
     double  m_acceptRatio = 0;
     double time_sec;
+    double m_cumulativeE_Lderiv=0;
+    double m_cumulativeE_Lderiv_expect=0;
+
     std::vector<double> energy_vec = std::vector<double>();
     class System* m_system = nullptr;
 };
