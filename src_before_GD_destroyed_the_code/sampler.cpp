@@ -145,7 +145,7 @@ void Sampler::computeAverages() {
 
 double Sampler::computeVariance(std::vector<double> x_sample, double x_mean){
     double var_sum=0;
-    for (int i; i<m_acceptedSteps; i++){
+    for (int i=0; i<m_acceptedSteps; i++){
         var_sum+=pow((x_sample[i]-x_mean),2);
     }
     cout<<x_sample.size();
