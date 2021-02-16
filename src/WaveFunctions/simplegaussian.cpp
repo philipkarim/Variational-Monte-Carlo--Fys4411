@@ -4,8 +4,12 @@
 #include "wavefunction.h"
 #include "../system.h"
 #include "../particle.h"
+#include "../sampler.h"
 
 #include <iostream>
+
+#include "gradientdecent.h"
+
 
 using namespace std;
 
@@ -169,3 +173,24 @@ std::vector<double> SimpleGaussian::computeQuantumForce (std::vector<double> par
 
     return QF_vec;
 }
+
+/*
+double SimpleGaussian::E_LDerivative(double alpha_n){
+    m_parameters[0]=alpha_n;
+    m_system->runMetropolisSteps(1000);
+    double expectEnerg, expectE_L_deri, expectderi_dot_EL;
+    std::vector<double> grad_values =  std::vector<double>();
+
+    grad_values =m_sampler->getGradientDecentValues();
+
+    expectEnerg=grad_values[0];
+    expectE_L_deri=grad_values[1];
+    expectderi_dot_EL=grad_values[2];
+    double expectEnergy    = expectEnerg/(m_system->getNumberOfMetropolisSteps());//getEquilibrationFraction());
+    double expectE_L_deriv     = expectE_L_deri/(m_system->getNumberOfMetropolisSteps());//getEquilibrationFraction());
+    double expectderiv_dot_EL = expectderi_dot_EL/(m_system->getNumberOfMetropolisSteps());//getEquilibrationFraction());
+
+    double E_L_derive=2*(expectderiv_dot_EL - expectEnergy*expectE_L_deriv)/m_system->getEquilibrationFraction();
+    return  E_L_derive;
+}
+*/

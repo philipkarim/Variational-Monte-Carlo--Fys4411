@@ -6,6 +6,7 @@
 #include "particle.h"
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
+#include "gradientdecent.h"
 
 //Write to file modules
 #include <fstream>
@@ -134,6 +135,12 @@ void Sampler::computeAverages() {
     m_cumulativeEnergy2 =m_cumulativeEnergy2/ steps_min_eq;
     m_variance=m_cumulativeEnergy2-(m_energy*m_energy);
 
+    //calculate list to return to gradient decent func:
+    grad_list[0]=m_cumulativeEnergy;
+    grad_list[1]=m_cumulativeE_Lderiv;
+    grad_list[2]=m_cumulativeE_Lderiv_expect;
+
+
     //minus 1?
     //m_stddeviation =sqrt( /m_system->getNumberOfMetropolisSteps()-1);
     //These two are wrong?
@@ -142,6 +149,17 @@ void Sampler::computeAverages() {
     m_acceptRatio = m_acceptedSteps / m_system->getNumberOfMetropolisSteps();//steps_min_eq;
 
 }
+
+std::vector<double> Sampler::getGradientDecentValues(){
+
+  //calculate list to return to gradient decent func:
+  grad_list[0]=m_cumulativeEnergy;
+  grad_list[1]=m_cumulativeE_Lderiv;
+  grad_list[2]=m_cumulativeE_Lderiv_expect;
+
+return grad_list;
+}
+
 
 double Sampler::computeVariance(std::vector<double> x_sample, double x_mean){
     double var_sum=0;
