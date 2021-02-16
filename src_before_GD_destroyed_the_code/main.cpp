@@ -8,11 +8,19 @@
 #include "InitialStates/initialstate.h"
 #include "InitialStates/randomuniform.h"
 #include "Math/random.h"
+#include "mpi.h"
 
 using namespace std;
 
 
 int main() {
+
+    //Init MPI
+    int numprocs, my_rank;
+    MPI_Init (&nargs, &args);
+    MPI_Comm_size (MPI_COMM_WORLD, &numprocs);
+    MPI_Comm_rank (MPI_COMM_WORLD, &my_rank);
+
     // Seed for the random number generator
     int seed = 2020;
 
@@ -43,6 +51,8 @@ int main() {
     //system->gradientDecent();
 
     //system->setNumberOfParticles        (numeric)
+
+    MPI_Finalize ();
 
     return 0;
 }
