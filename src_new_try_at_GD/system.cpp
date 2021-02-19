@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include "WaveFunctions/simplegaussian.h"
-
+#include "gradientdecent.h"
 
 System::System() {
     m_random = new Random();

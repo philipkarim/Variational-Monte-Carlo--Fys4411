@@ -12,6 +12,9 @@ void runGradientDecent(std::vector<double> input_variables_double, std::vector<i
 
 double E_LDerivative(double alpha_n, std::vector<double> in_double, std::vector<int> in_int, std::vector<bool> in_bool);
 
+//class Sampler*             getGradientDecentValues()   { return grad_list; }
+
+
 //public:
   //class Sampler*                  getSampler()        { return m_sampler; }
 //private:
