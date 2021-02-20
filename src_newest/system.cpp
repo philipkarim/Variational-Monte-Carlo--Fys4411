@@ -9,7 +9,8 @@
 #include <iostream>
 
 #include "WaveFunctions/simplegaussian.h"
-//#include "gradientdecent.h"
+
+using namespace std;
 
 System::System() {
     m_random = new Random();
@@ -211,56 +212,74 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
 }
 
 
+double System::gradientDescent(double initialAlpha){
+//Gradient descent method to find the optimal variational parameter alpha given an initial parameter initialAlpha
+    int steepestDescentSteps = (int) 1e+3;
+    int maxIterations=10;
+    double alpha = initialAlpha;
+    double beta = getWaveFunction()->getParameters()[1];
+    double lambda = -0.001;
+    int iterations = 0;
+    double energyDerivative = 100;
+    double cumulativeAlpha = 0;
+    double tol = 1e-10;
+    double percentAlphasToSave = 0.3;
+    double expectEnergy, expectE_L_deriv, expectderiv_dot_EL, El_deriv_curr, gamma_dir;
 
 
-void System::runGradientDecent(double alpha_guess){
-    double alpha_curr=alpha_guess;
+    double alpha_curr;
     double alpha_next;
-    double El_deriv_curr;
     double El_deriv_prev=100.0;
-    double gamma_dir, alpha_prev;
-    double epsilon=1E-6;
-    double expectEnergy, expectE_L_deriv, expectderiv_dot_EL;
-    int iterations=5;   //Not sure how many iterations to use, 50 or 500??
-    std::vector<double> grad_values;
-    grad_values.reserve(3);
-    std::vector<double> parameters_update(2);
+    double alpha_prev;
+
+    vector<double> grad_values(3);
 
 
-    for(int ii=0; ii<iterations; ii++){
-        parameters_update[0] = alpha_curr;
-        parameters_update[1] = m_beta;
-        getWaveFunction()->setParameters(parameters_update);
+    while (iterations < maxIterations && fabs(El_deriv_curr) > tol){
+        vector<double> parameters(2);
+        parameters[0] = alpha;
+        parameters[1] = beta;
+        //parameters[2] = alpha*beta;
+        getWaveFunction()->setParameters(parameters);
+        runMetropolisSteps(steepestDescentSteps);
 
-        runMetropolisSteps(1000);
-
-        grad_values=m_sampler->getGradientDecentValues();
-
-        //Defining double in for loop
-
-        expectEnergy    = grad_values[0]/1;//(system->getNumberOfMetropolisSteps());//*getEquilibrationFraction());
-        expectE_L_deriv     = grad_values[1]/1;//(system->getNumberOfMetropolisSteps());//*getEquilibrationFraction());
-        expectderiv_dot_EL = grad_values[2]/1;//(system->getNumberOfMetropolisSteps());//*getEquilibrationFraction());
-
-        El_deriv_curr=2*(expectderiv_dot_EL - expectEnergy*expectE_L_deriv)/1;//system->getEquilibrationFraction();
+        energyDerivative = findEnergyDerivative();
 
 
-        //Division by 0, added the 5
-        gamma_dir=(parameters_update[0]-alpha_prev+epsilon)/(El_deriv_curr-El_deriv_prev);
+        // Make sure we accept enough moves (with interaction can get stuck)
+        /*
+        if ((double)m_sampler->getAcceptedSteps() / steepestDescentSteps > 0.90){
+            alpha += lambda*energyDerivative;
+            iterations++;
+        }
+*/
+        cout << " New alpha = "  << alpha <<  endl;
+        cout << " Energy derivative = " << energyDerivative << endl;
+        cout << " Iterations = " << iterations << endl;
 
-        alpha_next=alpha_curr-gamma_dir*(El_deriv_curr);
-        alpha_prev=alpha_curr;
-        alpha_curr=alpha_next;
-        El_deriv_prev=El_deriv_curr;
+
+        /*if ((double) iterations / maxIterations > 1-percentAlphasToSave){
+            cumulativeAlpha += alpha;
+        }
+*/
+        alpha += lambda*energyDerivative;
+        iterations++;
+
     }
+
+    //alpha = cumulativeAlpha / (maxIterations*percentAlphasToSave);
+    return alpha;
 }
 
 
+double System::findEnergyDerivative()
+{
+    double meanEnergy      = getSampler()->getCumulativeEnergy() / (m_numberOfMetropolisSteps*getEquilibrationFraction());  //1-equilibration?
+    double meanWFderiv     = getSampler()->getCumulativeEnergyDeriv() / (m_numberOfMetropolisSteps*getEquilibrationFraction());
+    double meanWFderivEloc =  getSampler()->getCumulativeEnergyDerivExpect() / (m_numberOfMetropolisSteps*getEquilibrationFraction());
 
-
-
-
-
+    return 2*(meanWFderivEloc - meanEnergy*meanWFderiv);
+}
 
 void System::setNumberOfParticles(int numberOfParticles) {
     m_numberOfParticles = numberOfParticles;
@@ -298,10 +317,6 @@ void System::setNumeric(bool numeric) {
 
 void System::setBruteforce(bool bruteforce_val) {
     m_bruteforce = bruteforce_val;
-}
-
-void System::setBeta(double beta) {
-    m_beta = beta;
 }
 
 void System::setTimeStep(double timeStep) {

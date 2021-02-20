@@ -1,8 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-#include "system.h"
 #include "sampler.h"
+#include "system.h"
 #include "particle.h"
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
@@ -40,9 +40,7 @@ void Sampler::sample(bool acceptedStep) {
         time_sec =0;
         m_cumulativeE_Lderiv=0;
         m_cumulativeE_Lderiv_expect=0;
-        grad_list[0]=0;
-        grad_list[1]=0;
-        grad_list[2]=0;
+
     }
     //Starting the clock
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
@@ -83,14 +81,14 @@ void Sampler::sample(bool acceptedStep) {
     m_cumulativeE_Lderiv+=E_L_deriv;
     m_cumulativeE_Lderiv_expect+=E_L_deriv*localEnergy;
 
-    //grad_list[0]+=m_cumulativeEnergy;
-    //grad_list[1]+=m_cumulativeE_Lderiv;
-    //grad_list[2]+=m_cumulativeE_Lderiv;
-
+/*
+    grad_list[0]+=m_cumulativeEnergy;
+    grad_list[1]+=m_cumulativeE_Lderiv;
+    grad_list[2]+=m_cumulativeE_Lderiv_expect;
+*/
     if (acceptedStep){
         m_acceptedSteps++;
     }
-
 
 }
 
@@ -198,36 +196,26 @@ void Sampler::writeToFile(){
 
 
   myfile.close();
+
+
 }
 
+int Sampler::getAcceptedSteps()const
+{
+    return m_acceptedSteps;
+}
 
-/*
+double Sampler::getCumulativeEnergy() const
+{
+    return m_cumulativeEnergy;
+}
 
-  cout << "  -- System info -- " << endl;
-  cout << " Number of particles  : " << np << endl;
-  cout << " Number of dimensions : " << nd << endl;
-  cout << " Number of Metropolis steps run : 10^" << std::log10(ms) << endl;
-  cout << " Number of equilibration steps  : 10^" << std::log10(std::round(ms*ef)) << endl;
-  cout << endl;
-  cout << "  -- Wave function parameters -- " << endl;
-  cout << " Number of parameters : " << p << endl;
-  for (int i=0; i < p; i++) {
-      cout << " Parameter " << i+1 << " : " << pa.at(i) << endl;
-  }
-  cout << endl;
-  cout << "  -- Results -- " << endl;
-  cout << " CPU time: " << time_sec << " s" << endl;
-  cout << " Energy : " << m_energy << endl;
-  cout << " Variance : " << m_variance << endl;
-  cout << " Accepted step ratio : " << m_acceptRatio << endl;
+double Sampler::getCumulativeEnergyDeriv() const
+{
+    return m_cumulativeE_Lderiv;
+}
 
-*/
-
-/*
-  char name2;
-  name2=m_energy;
-  ofstream myfile;
-  myfile.open("datadump/test"+ name2+".txt");
-  myfile << m_energy;
-  myfile.close();
-*/
+double Sampler::getCumulativeEnergyDerivExpect() const
+{
+    return m_cumulativeE_Lderiv_expect;
+}

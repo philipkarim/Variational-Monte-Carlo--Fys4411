@@ -6,6 +6,14 @@ class System {
 public:
     System();
     System(int seed);
+    //Added aftertremoved with typos?
+    /*
+    void setPosition(const std::vector<double> &position);
+    void adjustPosition(double change, int dimension);
+    void setNumberOfDimensions(int numberOfDimensions);
+    std::vector<double> getPosition() { return m_position; }
+    */
+    //
     bool metropolisStep             ();
     bool metropolisStepImportanceSampling();
     void runMetropolisSteps         (int numberOfMetropolisSteps);
@@ -29,14 +37,13 @@ public:
     void setNumeric                     (bool numeric);
     bool getNumeric()                   { return m_numeric; }
 
-    void setBruteforce                  (bool bruteforce_val);  //Changed this from numeric, check when done GD
+    void setBruteforce                  (bool bruteforce_val);
     bool getBruteforce()                {return m_bruteforce;}
     void setTimeStep                    (double timeStep);
     double getTimeStep()                {return m_timeStep;}
 
-    void setBeta(double beta);
-
-    //void runGradientDecent(double alpha_guess);
+    double gradientDescent(double initialAlpha);
+    double findEnergyDerivative();
 
 
     //double gradientDecent();
@@ -62,5 +69,4 @@ private:
     bool m_numeric;
     bool m_bruteforce;
     double m_timeStep;
-    double m_beta;
 };
