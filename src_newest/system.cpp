@@ -77,7 +77,6 @@ bool System::metropolisStep() {
       }
 }
 
-
 bool System::metropolisStepImportanceSampling() {
     //_________Importance sampling_____________
 
@@ -139,43 +138,6 @@ bool System::metropolisStepImportanceSampling() {
 
 
     //Extracting the new wavefunction, and checks if it is accepted
-/*
-
-
-    for (int cycles = 1; cycles <= NumberMCsamples; cycles++){
-   // new position
-   for (int i = 0; i < NumberParticles; i++) {
-     for (int j = 0; j < Dimension; j++) {
-       // gaussian deviate to compute new positions using a given timestep
-       NewPosition(i,j) = OldPosition(i,j) + Normaldistribution(gen)*sqrt(timestep)+OldQuantumForce(i,j)*timestep*D;
-
-     }}}
-
-     //Choosing a random step:
-     double temp_rand=UniformNumberGenerator(gen);
-     double step=m_stepLength*(temp_rand-0.5);
-
-     //Start the step which gives movement of the particle
-     for (int dim=0; dim<m_numberOfDimensions; dim++){
-       m_particles[random_index]->adjustPosition(step, dim);
-     }
-
-     //std::cout << wfold<<std::endl;
-
-     //Extracting the new wavefunction, and checks if it is accepted
-     double wfnew=m_waveFunction->evaluate(m_particles);
-     psi_factor=wfnew*wfnew/(wfold*wfold);
-     //If accepted:
-     if (temp_rand<=psi_factor){
-        wfold=wfnew;
-        return true;
-     }
-     else{
-         m_particles[random_index]->setPosition(PositionOld);
-        return false;
-      }
-
-*/
 }
 
 void System::runMetropolisSteps(int numberOfMetropolisSteps) {
@@ -211,7 +173,6 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     //m_sampler->writeToFile();
 }
 
-
 double System::gradientDescent(double initialAlpha){
 //Gradient descent method to find the optimal variational parameter alpha given an initial parameter initialAlpha
     int steepestDescentSteps = (int) 1e+3;
@@ -220,27 +181,17 @@ double System::gradientDescent(double initialAlpha){
     double beta = getWaveFunction()->getParameters()[1];
     double lambda = -0.001;
     int iterations = 0;
-    double energyDerivative = 100;
+    double energyDerivative = 100.;
     double cumulativeAlpha = 0;
-    double tol = 1e-10;
+    double tol = 1e-5;
     double percentAlphasToSave = 0.3;
-    double expectEnergy, expectE_L_deriv, expectderiv_dot_EL, El_deriv_curr, gamma_dir;
 
-
-    double alpha_curr;
-    double alpha_next;
-    double El_deriv_prev=100.0;
-    double alpha_prev;
-
-    vector<double> grad_values(3);
-
-
-    while (iterations < maxIterations && fabs(El_deriv_curr) > tol){
-        vector<double> parameters(2);
-        parameters[0] = alpha;
-        parameters[1] = beta;
+    while (iterations < maxIterations && fabs(energyDerivative) > tol){
+        vector<double> parameterss(2);
+        parameterss[0] = alpha;
+        parameterss[1] = beta;
         //parameters[2] = alpha*beta;
-        getWaveFunction()->setParameters(parameters);
+        getWaveFunction()->setParameters(parameterss);
         runMetropolisSteps(steepestDescentSteps);
 
         energyDerivative = findEnergyDerivative();

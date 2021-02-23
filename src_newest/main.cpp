@@ -44,8 +44,6 @@ int main() {
     bool GD=true;
     double initialAlpha = 0.45;
 
-
-
     System* system = new System(seed);
     system->setHamiltonian              (new HarmonicOscillator(system, omega));  //Added alpha
     system->setWaveFunction             (new SimpleGaussian(system, alpha, beta));
@@ -63,7 +61,7 @@ int main() {
 
     else{
           alpha = system->gradientDescent(initialAlpha);
-          vector<double> parameters(3);
+          vector<double> parameters(2);
           parameters[0] = alpha;
           parameters[1] = beta;
           system->getWaveFunction()->setParameters(parameters);
