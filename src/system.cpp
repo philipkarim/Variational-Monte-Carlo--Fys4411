@@ -49,7 +49,7 @@ bool System::metropolisStep() {
     PositionOld=m_particles[random_index]->getPosition();
 
      //Choosing a random step:
-     double temp_rand=UniformNumberGenerator(gen);
+     //double temp_rand=UniformNumberGenerator(gen);
      double step=m_stepLength*(UniformNumberGenerator(gen)-0.5);
 
      //Start the step which gives movement of the particle
@@ -195,12 +195,12 @@ double System::gradientDescent(double initialAlpha){
 
 
         // Make sure we accept enough moves (with interaction can get stuck)
-        /*
-        if ((double)m_sampler->getAcceptedSteps() / steepestDescentSteps > 0.90){
+
+        if ((double)m_sampler->getAcceptedSteps() / steepestDescentSteps > 0.85){
             alpha += lambda*energyDerivative;
             iterations++;
         }
-*/
+
         cout << " New alpha = "  << alpha <<  endl;
         cout << " Energy derivative = " << energyDerivative << endl;
         cout << " Iterations = " << iterations << endl;
@@ -210,8 +210,8 @@ double System::gradientDescent(double initialAlpha){
             cumulativeAlpha += alpha;
         }
 */
-        alpha += lambda*energyDerivative;
-        iterations++;
+        //alpha += lambda*energyDerivative;
+        //iterations++;
 
     }
 

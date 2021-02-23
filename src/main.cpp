@@ -27,11 +27,11 @@ int main() {
     int seed = 2021;
 
     //Dim=1, particle=1 should give 0.5
-    int numberOfDimensions  = 1;
-    int numberOfParticles   = 1;
+    int numberOfDimensions  = 3;
+    int numberOfParticles   = 10;
     int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
-    double alpha            = 0.8;          // Variational parameter.
+    double alpha            = 0.7;          // Variational parameter.
     double beta             = 1;
     double timeStep         = 0.01;         // Metropolis time step (Importance sampling)
     double stepLength       = 1;            // Metropolis step length.
@@ -39,9 +39,9 @@ int main() {
     bool numeric            = false;         // True->Numeric differentiation, False->Analytic
     // Think the error with low energy is due to
     //bruteforce function, might try to make beta equal to alpha
-    bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
-    bool GD=false;
-    double initialAlpha = 0.3;
+    bool bruteforce_val     = false;         // True->bruteforce, False->Importance sampling
+    bool GD=true;
+    double initialAlpha = 0.6;
 
     System* system = new System(seed);
     system->setHamiltonian              (new HarmonicOscillator(system, omega));  //Added alpha
