@@ -8,24 +8,16 @@
 #include "InitialStates/initialstate.h"
 #include "InitialStates/randomuniform.h"
 #include "Math/random.h"
-//#include "mpi.h"
+#include "gradientdecent.h"
+//#include "main.h"
 
 using namespace std;
 
+//void *m_gradientdecent=getGradientDecent()
 
 int main() {
-
-    //Init MPI
-/*
-    int numprocs, my_rank;
-    MPI_Init (&nargs, &args);
-    MPI_Comm_size (MPI_COMM_WORLD, &numprocs);
-    MPI_Comm_rank (MPI_COMM_WORLD, &my_rank);
-*/
     // Seed for the random number generator
-
-    int seed = 2021;
-
+    int seed = 2020;
 
     //Dim=1, particle=1 should give 0.5
     int numberOfDimensions  = 1;
@@ -33,16 +25,24 @@ int main() {
     int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
     double alpha            = 0.5;          // Variational parameter.
-    double beta             = 1;
+    double beta             = 1.0;
     double timeStep         = 0.01;         // Metropolis time step (Importance sampling)
     double stepLength       = 1;            // Metropolis step length.
     double equilibration    = 0.1;          // Amount of the total steps used for equilibration.
     bool numeric            = false;         // True->Numeric differentiation, False->Analytic
-    // Think the error with low energy is due to
-    //bruteforce function, might try to make beta equal to alpha
-    bool bruteforce_val     = false;         // True->bruteforce, False->Importance sampling
-    bool GD=true;
-    double initialAlpha = 0.45;
+    bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
+    bool gradient_decent    =true;
+    double alpha_guess_GD   =0.45;          //Initial guess of alpha used in gradient decent method
+
+    if (gradient_decent==true){
+        //GradientDecent run;
+        //GradientDecent* m_gradientdecent;
+        //getGradientDecent()->
+        //run.runGradientDecent(alpha_guess_GD, omega, beta,
+        //             timeStep, stepLength, equilibration, numberOfDimensions, numberOfParticles,
+        //            seed, numeric, bruteforce_val);
+      }
+    else{
 
     System* system = new System(seed);
     system->setHamiltonian              (new HarmonicOscillator(system, omega));  //Added alpha
@@ -54,28 +54,10 @@ int main() {
     system->setBruteforce               (bruteforce_val);
     system->setTimeStep                 (timeStep);
 
-    if (GD==false){
-
-      system->runMetropolisSteps          (numberOfSteps);
-    }
-
-    else{
-          alpha = system->gradientDescent(initialAlpha);
-          vector<double> parameters(2);
-          parameters[0] = alpha;
-          parameters[1] = beta;
-          system->getWaveFunction()->setParameters(parameters);
-
-    }
-
-
     system->runMetropolisSteps          (numberOfSteps);
-
     //system->gradientDecent();
-
+    }
     //system->setNumberOfParticles        (numeric)
-
-    //MPI_Finalize ();
 
     return 0;
 }

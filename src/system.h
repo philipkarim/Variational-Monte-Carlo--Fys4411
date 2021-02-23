@@ -37,14 +37,18 @@ public:
     void setNumeric                     (bool numeric);
     bool getNumeric()                   { return m_numeric; }
 
-    void setBruteforce                  (bool numeric);
+    void setBruteforce                  (bool bruteforce_val);
     bool getBruteforce()                {return m_bruteforce;}
     void setTimeStep                    (double timeStep);
     double getTimeStep()                {return m_timeStep;}
+
+    double gradientDescent(double initialAlpha);
+    double findEnergyDerivative();
+
+
     //double gradientDecent();
     //double E_LDerivative                (double alpha_n);
     //bool getNumeric()          { return m_numeric; }
-    //double E_LDerivative          (class SimpleGaussian* alpha_n);
 
 
 

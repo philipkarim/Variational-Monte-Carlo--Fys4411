@@ -6,6 +6,7 @@
 #include "particle.h"
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
+#include "gradientdecent.h"
 
 //Write to file modules
 #include <fstream>
@@ -81,11 +82,6 @@ void Sampler::sample(bool acceptedStep) {
     m_cumulativeE_Lderiv+=E_L_deriv;
     m_cumulativeE_Lderiv_expect+=E_L_deriv*localEnergy;
 
-/*
-    grad_list[0]+=m_cumulativeEnergy;
-    grad_list[1]+=m_cumulativeE_Lderiv;
-    grad_list[2]+=m_cumulativeE_Lderiv_expect;
-*/
     if (acceptedStep){
         m_acceptedSteps++;
     }
@@ -139,6 +135,12 @@ void Sampler::computeAverages() {
     m_cumulativeEnergy2 =m_cumulativeEnergy2/ steps_min_eq;
     m_variance=m_cumulativeEnergy2-(m_energy*m_energy);
 
+    //calculate list to return to gradient decent func:
+    grad_list[0]=m_cumulativeEnergy;
+    grad_list[1]=m_cumulativeE_Lderiv;
+    grad_list[2]=m_cumulativeE_Lderiv_expect;
+
+
     //minus 1?
     //m_stddeviation =sqrt( /m_system->getNumberOfMetropolisSteps()-1);
     //These two are wrong?
@@ -148,9 +150,20 @@ void Sampler::computeAverages() {
 
 }
 
+std::vector<double> Sampler::getGradientDecentValues(){
+
+  //calculate list to return to gradient decent func:
+  grad_list[0]=m_cumulativeEnergy;
+  grad_list[1]=m_cumulativeE_Lderiv;
+  grad_list[2]=m_cumulativeE_Lderiv_expect;
+
+return grad_list;
+}
+
+
 double Sampler::computeVariance(std::vector<double> x_sample, double x_mean){
     double var_sum=0;
-    for (int i=0; i<m_acceptedSteps; i++){
+    for (int i; i<m_acceptedSteps; i++){
         var_sum+=pow((x_sample[i]-x_mean),2);
     }
     cout<<x_sample.size();
@@ -198,24 +211,37 @@ void Sampler::writeToFile(){
   myfile.close();
 
 
-}
+/*
 
-int Sampler::getAcceptedSteps()const
-{
-    return m_acceptedSteps;
-}
+  cout << "  -- System info -- " << endl;
+  cout << " Number of particles  : " << np << endl;
+  cout << " Number of dimensions : " << nd << endl;
+  cout << " Number of Metropolis steps run : 10^" << std::log10(ms) << endl;
+  cout << " Number of equilibration steps  : 10^" << std::log10(std::round(ms*ef)) << endl;
+  cout << endl;
+  cout << "  -- Wave function parameters -- " << endl;
+  cout << " Number of parameters : " << p << endl;
+  for (int i=0; i < p; i++) {
+      cout << " Parameter " << i+1 << " : " << pa.at(i) << endl;
+  }
+  cout << endl;
+  cout << "  -- Results -- " << endl;
+  cout << " CPU time: " << time_sec << " s" << endl;
+  cout << " Energy : " << m_energy << endl;
+  cout << " Variance : " << m_variance << endl;
+  cout << " Accepted step ratio : " << m_acceptRatio << endl;
 
-double Sampler::getCumulativeEnergy() const
-{
-    return m_cumulativeEnergy;
-}
+*/
 
-double Sampler::getCumulativeEnergyDeriv() const
-{
-    return m_cumulativeE_Lderiv;
-}
+/*
+  char name2;
+  name2=m_energy;
+  ofstream myfile;
+  myfile.open("datadump/test"+ name2+".txt");
+  myfile << m_energy;
+  myfile.close();
+*/
 
-double Sampler::getCumulativeEnergyDerivExpect() const
-{
-    return m_cumulativeE_Lderiv_expect;
+
+
 }

@@ -7,12 +7,10 @@
 #include "InitialStates/initialstate.h"
 #include "Math/random.h"
 #include <iostream>
-#include <vector>
-
 
 #include "WaveFunctions/simplegaussian.h"
-#include "gradientdecent.h"
 
+using namespace std;
 
 System::System() {
     m_random = new Random();
@@ -79,7 +77,6 @@ bool System::metropolisStep() {
       }
 }
 
-
 bool System::metropolisStepImportanceSampling() {
     //_________Importance sampling_____________
 
@@ -141,43 +138,6 @@ bool System::metropolisStepImportanceSampling() {
 
 
     //Extracting the new wavefunction, and checks if it is accepted
-/*
-
-
-    for (int cycles = 1; cycles <= NumberMCsamples; cycles++){
-   // new position
-   for (int i = 0; i < NumberParticles; i++) {
-     for (int j = 0; j < Dimension; j++) {
-       // gaussian deviate to compute new positions using a given timestep
-       NewPosition(i,j) = OldPosition(i,j) + Normaldistribution(gen)*sqrt(timestep)+OldQuantumForce(i,j)*timestep*D;
-
-     }}}
-
-     //Choosing a random step:
-     double temp_rand=UniformNumberGenerator(gen);
-     double step=m_stepLength*(temp_rand-0.5);
-
-     //Start the step which gives movement of the particle
-     for (int dim=0; dim<m_numberOfDimensions; dim++){
-       m_particles[random_index]->adjustPosition(step, dim);
-     }
-
-     //std::cout << wfold<<std::endl;
-
-     //Extracting the new wavefunction, and checks if it is accepted
-     double wfnew=m_waveFunction->evaluate(m_particles);
-     psi_factor=wfnew*wfnew/(wfold*wfold);
-     //If accepted:
-     if (temp_rand<=psi_factor){
-        wfold=wfnew;
-        return true;
-     }
-     else{
-         m_particles[random_index]->setPosition(PositionOld);
-        return false;
-      }
-
-*/
 }
 
 void System::runMetropolisSteps(int numberOfMetropolisSteps) {
@@ -213,63 +173,64 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     //m_sampler->writeToFile();
 }
 
-/*
-double System::gradientDecent(){
+double System::gradientDescent(double initialAlpha){
+//Gradient descent method to find the optimal variational parameter alpha given an initial parameter initialAlpha
+    int steepestDescentSteps = (int) 1e+3;
+    int maxIterations=10;
+    double alpha = initialAlpha;
+    double beta = getWaveFunction()->getParameters()[1];
+    double lambda = -0.001;
+    int iterations = 0;
+    double energyDerivative = 100.;
+    double cumulativeAlpha = 0;
+    double tol = 1e-5;
+    double percentAlphasToSave = 0.3;
 
-    //Remember to put this in main and setting the alpha
-    //before running the main metropolis. Run for about 1000 steps
-    double alpha_curr=0.45;
-    double alpha_prev=alpha_curr;  //Initial guess
+    while (iterations < maxIterations && fabs(energyDerivative) > tol){
+        vector<double> parameterss(2);
+        parameterss[0] = alpha;
+        parameterss[1] = beta;
+        //parameters[2] = alpha*beta;
+        getWaveFunction()->setParameters(parameterss);
+        runMetropolisSteps(steepestDescentSteps);
 
-    double alpha_next;
-    double El_deriv2, El_deriv_prev;
-    double gamma_dir;
-    double epsilon;
+        energyDerivative = findEnergyDerivative();
 
-    int iterations=10;   //Not sure how many iterations to use, 50 or 500??
 
-    double beta = getWaveFunction()->getParameters()[2]/getWaveFunction()->getParameters()[0];
+        // Make sure we accept enough moves (with interaction can get stuck)
+        /*
+        if ((double)m_sampler->getAcceptedSteps() / steepestDescentSteps > 0.90){
+            alpha += lambda*energyDerivative;
+            iterations++;
+        }
+*/
+        cout << " New alpha = "  << alpha <<  endl;
+        cout << " Energy derivative = " << energyDerivative << endl;
+        cout << " Iterations = " << iterations << endl;
 
-    for(int ii=0; ii<iterations; ii++){
-        //std::vector<double> parameters(2);
-        //parameters[0] = alpha_curr;
-        //parameters[2] = alpha_curr*beta;
-        //Need to find a way to set the parameters public for each itteration
-        //system->setWaveFunction             (new SimpleGaussian(system, alpha_curr, beta));
 
-        El_deriv2=m_waveFunction->E_LDerivative(alpha_curr);
-        El_deriv_prev=m_waveFunction->E_LDerivative(alpha_prev);
+        /*if ((double) iterations / maxIterations > 1-percentAlphasToSave){
+            cumulativeAlpha += alpha;
+        }
+*/
+        alpha += lambda*energyDerivative;
+        iterations++;
 
-        gamma_dir=(alpha_curr-alpha_prev+epsilon)/(El_deriv2-El_deriv_prev);
-
-        alpha_next=alpha_curr-gamma_dir*(El_deriv2);
-
-        alpha_prev=alpha_curr;
-        alpha_curr=alpha_next;
     }
 
-    //To compute the local energy derivative, write a function that runs the
-    //runmetropolisstep function and returns the derivative function of local energy.
-
-
-    return alpha_curr;
-
+    //alpha = cumulativeAlpha / (maxIterations*percentAlphasToSave);
+    return alpha;
 }
-*/
-/*
-double System::E_LDerivative(double alpha_n){
-    runMetropolisSteps(1000);
-    double expectEnerg, expectE_L_deri, expectderi_dot_EL
-                      =m_sampler->getGradientDecentValues();
 
-    double expectEnergy    = expectEnerg/(m_numberOfMetropolisSteps);//getEquilibrationFraction());
-    double expectE_L_deriv     = expectE_L_deri/(m_numberOfMetropolisSteps);//getEquilibrationFraction());
-    double expectderiv_dot_EL = expectderi_dot_EL/(m_numberOfMetropolisSteps);//getEquilibrationFraction());
 
-    double E_L_derive=2*(expectderiv_dot_EL - expectEnergy*expectE_L_deriv)/m_equilibrationFraction;
-    return  E_L_derive;
+double System::findEnergyDerivative()
+{
+    double meanEnergy      = getSampler()->getCumulativeEnergy() / (m_numberOfMetropolisSteps*getEquilibrationFraction());  //1-equilibration?
+    double meanWFderiv     = getSampler()->getCumulativeEnergyDeriv() / (m_numberOfMetropolisSteps*getEquilibrationFraction());
+    double meanWFderivEloc =  getSampler()->getCumulativeEnergyDerivExpect() / (m_numberOfMetropolisSteps*getEquilibrationFraction());
+
+    return 2*(meanWFderivEloc - meanEnergy*meanWFderiv);
 }
-*/
 
 void System::setNumberOfParticles(int numberOfParticles) {
     m_numberOfParticles = numberOfParticles;

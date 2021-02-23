@@ -10,8 +10,8 @@ public:
     virtual double evaluate(std::vector<class Particle*> particles) = 0;
     virtual double computeDoubleDerivative(std::vector<class Particle*> particles) = 0;
     virtual std::vector<double> computeQuantumForce (std::vector<double> particles)=0;
+    //virtual double E_LDerivative(double alpha_n)=0;
 
-    void setParameters(const std::vector<double> &parameters);
 
 protected:
     int     m_numberOfParameters = 0;

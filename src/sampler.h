@@ -13,8 +13,12 @@ public:
     double getVariance()          { return m_variance; }
     double getAcceptRatio()          { return m_acceptRatio; }
 
-    std::vector<double> getGradientDecentValues();
+    //double getGradientDecentValues()        { return m_cumulativeEnergy, m_cumulativeE_Lderiv, m_cumulativeE_Lderiv_expect; }
+    int getAcceptedSteps()const;
 
+    double getCumulativeEnergy() const;
+    double getCumulativeEnergyDeriv() const;
+    double getCumulativeEnergyDerivExpect() const;
 
 
 private:
@@ -30,10 +34,7 @@ private:
     double m_cumulativeE_Lderiv=0;
     double m_cumulativeE_Lderiv_expect=0;
 
-    std::vector<double> grad_list = std::vector<double>();
+
     std::vector<double> energy_vec = std::vector<double>();
     class System* m_system = nullptr;
-
-    //class GradientDecent*m_gradientdecent = nullptr;
-
 };
