@@ -20,7 +20,6 @@ System::System(int seed) {
     m_random = new Random(seed);
 }
 
-
 bool System::metropolisStep() {
     /* Perform the actual Metropolis step: Choose a particle at random and
      * change it's position by a random amount, and check if the step is
@@ -51,7 +50,7 @@ bool System::metropolisStep() {
 
      //Choosing a random step:
      double temp_rand=UniformNumberGenerator(gen);
-     double step=m_stepLength*(temp_rand-0.5);
+     double step=m_stepLength*(UniformNumberGenerator(gen)-0.5);
 
      //Start the step which gives movement of the particle
      for (int dim=0; dim<m_numberOfDimensions; dim++){
@@ -67,7 +66,7 @@ bool System::metropolisStep() {
      double wfnew=m_waveFunction->evaluate(m_particles);
      psi_factor=wfnew*wfnew/(wfold*wfold);
      //If accepted:
-     if (temp_rand<=psi_factor){
+     if (UniformNumberGenerator(gen)<=psi_factor){
         wfold=wfnew;
         return true;
      }
@@ -136,8 +135,6 @@ bool System::metropolisStepImportanceSampling() {
         return false;
     }
 
-
-    //Extracting the new wavefunction, and checks if it is accepted
 }
 
 void System::runMetropolisSteps(int numberOfMetropolisSteps) {
