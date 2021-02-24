@@ -45,18 +45,18 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
     }
 
     //Computing the potential energy (V_ext)
-    std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
-    std::iota(dimensions_length.begin(), dimensions_length.end(), 0);
+    std::vector<int> dimensions_length_CLE(m_system->getNumberOfDimensions());
+    std::iota(dimensions_length_CLE.begin(), dimensions_length_CLE.end(), 0);
 
     for(int i=0; i<m_system->getNumberOfParticles(); i++){
       r_pos=particles[i]->getPosition();
 
-      if (dimensions_length.size()==3){
+      if (dimensions_length_CLE.size()==3){
         x_part=r_pos[0]*r_pos[0];
         y_part=r_pos[1]*r_pos[1];
         z_part=r_pos[2]*r_pos[2];
       }
-      else if(dimensions_length.size()==2){
+      else if(dimensions_length_CLE.size()==2){
         x_part=r_pos[0]*r_pos[0];
         y_part=r_pos[1]*r_pos[1];
         z_part=0;

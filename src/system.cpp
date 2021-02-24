@@ -196,7 +196,7 @@ double System::gradientDescent(double initialAlpha){
 
         // Make sure we accept enough moves (with interaction can get stuck)
 
-        if ((double)m_sampler->getAcceptedSteps() / steepestDescentSteps > 0.85){
+        if ((double)m_sampler->getAcceptedSteps() / steepestDescentSteps > 0.7){
             alpha += lambda*energyDerivative;
             iterations++;
         }

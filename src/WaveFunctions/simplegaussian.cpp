@@ -6,6 +6,7 @@
 #include "../particle.h"
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -40,8 +41,8 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
     std::vector<double> r_pos;
 
     double x_part, y_part, z_part;
-    std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
-    std::iota(dimensions_length.begin(), dimensions_length.end(), 0);
+    std::vector<int> dimensions_length_ev(m_system->getNumberOfDimensions());
+    std::iota(dimensions_length_ev.begin(), dimensions_length_ev.end(), 0);
 /*
     for(int i=0; i<m_system->getNumberOfParticles(); i++){
       r_pos=particles[i]->getPosition();
@@ -62,12 +63,12 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
     for(int i=0; i<m_system->getNumberOfParticles(); i++){
       r_pos=particles[i]->getPosition();
 
-      if (dimensions_length.size()==3){
+      if (dimensions_length_ev.size()==3){
         x_part=r_pos[0]*r_pos[0];
         y_part=r_pos[1]*r_pos[1];
         z_part=m_parameters[1]*r_pos[2]*r_pos[2];
       }
-      else if(dimensions_length.size()==2){
+      else if(dimensions_length_ev.size()==2){
         x_part=r_pos[0]*r_pos[0];
         y_part=r_pos[1]*r_pos[1];
         z_part=0;
@@ -101,24 +102,25 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
 
      // For non-interacting particles
      std::vector<double> r_pos;
+     r_pos.reserve(m_system->getNumberOfDimensions());
      double wf=evaluate(particles);
      double derivate2=0;
      double x_lap, y_lap, z_lap;
-     std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
-     std::iota(dimensions_length.begin(), dimensions_length.end(), 0);
+     std::vector<int> dimensions_length_CDD(m_system->getNumberOfDimensions());
+     std::iota(dimensions_length_CDD.begin(), dimensions_length_CDD.end(), 0);
 
      //Analytically differentiatian
      //if(m_system->getNumeric()==false){
 
        for(int i=0; i<m_system->getNumberOfParticles(); i++){
          r_pos=particles[i]->getPosition();
-
-         if (dimensions_length.size()==3){
+         cout<<r_pos[5]<<endl;
+         if (dimensions_length_CDD.size()==3){
            x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
            y_lap=(2*m_parameters[0]*r_pos[1]*r_pos[1]-1);
            z_lap=m_parameters[1]*(2*m_parameters[0]*m_parameters[1]*r_pos[2]*r_pos[2]-1);
          }
-         else if(dimensions_length.size()==2){
+         else if(dimensions_length_CDD.size()==2){
            x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
            y_lap=(2*m_parameters[0]*r_pos[1]*r_pos[1]-1);
            z_lap=0;
@@ -148,15 +150,15 @@ std::vector<double> SimpleGaussian::computeQuantumForce (std::vector<double> par
     double z_i=particles[2];
 
     std::vector<double> QF_vec =  std::vector<double>();
-    std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
-    std::iota(dimensions_length.begin(), dimensions_length.end(), 0);
+    std::vector<int> dimensions_length_CQF(m_system->getNumberOfDimensions());
+    std::iota(dimensions_length_CQF.begin(), dimensions_length_CQF.end(), 0);
 
-    if (dimensions_length.size()==3){
+    if (dimensions_length_CQF.size()==3){
       QF_vec.push_back(-4*x_i*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
       QF_vec.push_back(-4*y_i*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
       QF_vec.push_back(-4*z_i*m_parameters[1]*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
     }
-    else if(dimensions_length.size()==2){
+    else if(dimensions_length_CQF.size()==2){
       QF_vec.push_back(-4*x_i*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
       QF_vec.push_back(-4*y_i*m_parameters[0]*exp(m_parameters[0]*(x_i+y_i+m_parameters[1]*z_i)));
       z_i=0;

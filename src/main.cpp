@@ -27,20 +27,20 @@ int main() {
     int seed = 2021;
 
     //Dim=1, particle=1 should give 0.5
+    //3 10 e5 false true is stable
+    //Importance sampling is  stable when timestep=1
     int numberOfDimensions  = 3;
     int numberOfParticles   = 10;
     int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
-    double alpha            = 0.7;          // Variational parameter.
+    double alpha            = 0.3;          // Variational parameter.
     double beta             = 1;
-    double timeStep         = 0.01;         // Metropolis time step (Importance sampling)
+    double timeStep         = 1;            // Metropolis time step (Importance sampling)
     double stepLength       = 1;            // Metropolis step length.
-    double equilibration    = 0.1;          // Amount of the total steps used for equilibration.
+    double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
     bool numeric            = false;         // True->Numeric differentiation, False->Analytic
-    // Think the error with low energy is due to
-    //bruteforce function, might try to make beta equal to alpha
-    bool bruteforce_val     = false;         // True->bruteforce, False->Importance sampling
-    bool GD=true;
+    bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
+    bool GD=false;
     double initialAlpha = 0.6;
 
     System* system = new System(seed);
