@@ -31,7 +31,7 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
     double potentialEnergy = 0;
     double kineticEnergy   = 0;
     double wf=m_system->getWaveFunction()->evaluate(particles);
-    std::vector<double> r_pos;
+    std::vector<double> r_pos_CLE;
 
 //    kineticEnergy=m_system->getWaveFunction()->computeDoubleDerivative(particles);
 
@@ -49,28 +49,28 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
     std::iota(dimensions_length_CLE.begin(), dimensions_length_CLE.end(), 0);
 
     for(int i=0; i<m_system->getNumberOfParticles(); i++){
-      r_pos=particles[i]->getPosition();
+      r_pos_CLE=particles[i]->getPosition();
 
       if (dimensions_length_CLE.size()==3){
-        x_part=r_pos[0]*r_pos[0];
-        y_part=r_pos[1]*r_pos[1];
-        z_part=r_pos[2]*r_pos[2];
+        x_part=r_pos_CLE[0]*r_pos_CLE[0];
+        y_part=r_pos_CLE[1]*r_pos_CLE[1];
+        z_part=r_pos_CLE[2]*r_pos_CLE[2];
       }
       else if(dimensions_length_CLE.size()==2){
-        x_part=r_pos[0]*r_pos[0];
-        y_part=r_pos[1]*r_pos[1];
+        x_part=r_pos_CLE[0]*r_pos_CLE[0];
+        y_part=r_pos_CLE[1]*r_pos_CLE[1];
         z_part=0;
       }
       else {
-        x_part=r_pos[0]*r_pos[0];
+        x_part=r_pos_CLE[0]*r_pos_CLE[0];
         y_part=0;
         z_part=0;
       }
 
       potentialEnergyPart+=(x_part+y_part+z_part);
     }
-    potentialEnergy=0.5*potentialEnergyPart*m_omega*m_omega*wf;
+    potentialEnergy=0.5*potentialEnergyPart*m_omega*m_omega;
 
-    return (kineticEnergy + potentialEnergy)/wf;
+    return (kineticEnergy/wf + potentialEnergy);
 
 }

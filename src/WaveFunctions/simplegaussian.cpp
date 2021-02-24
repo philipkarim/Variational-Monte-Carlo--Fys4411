@@ -36,45 +36,45 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
 
 // Newest
 
-    //double r_tot=0.0, psi=1.0,
+    double r_tot=0.0;
     double g_func=1;
-    std::vector<double> r_pos;
+    std::vector<double> r_pos_E;
 
     double x_part, y_part, z_part;
     std::vector<int> dimensions_length_ev(m_system->getNumberOfDimensions());
     std::iota(dimensions_length_ev.begin(), dimensions_length_ev.end(), 0);
 /*
     for(int i=0; i<m_system->getNumberOfParticles(); i++){
-      r_pos=particles[i]->getPosition();
+      r_pos_E=particles[i]->getPosition();
       for (int dim=0; dim<m_system->getNumberOfDimensions(); dim++){
         if (dim==2){
-          r_tot+=m_parameters[1]*r_pos[dim]*r_pos[dim];
+          r_tot+=m_parameters[1]*r_pos_E[dim]*r_pos_E[dim];
         }
         else{
-        r_tot+=r_pos[dim]*r_pos[dim];
+        r_tot+=r_pos_E[dim]*r_pos_E[dim];
         }
       }
       g_func*=exp(-m_parameters[0]*r_tot);
     }
+*/
 
 
-    */
 
     for(int i=0; i<m_system->getNumberOfParticles(); i++){
-      r_pos=particles[i]->getPosition();
+      r_pos_E=particles[i]->getPosition();
 
       if (dimensions_length_ev.size()==3){
-        x_part=r_pos[0]*r_pos[0];
-        y_part=r_pos[1]*r_pos[1];
-        z_part=m_parameters[1]*r_pos[2]*r_pos[2];
+        x_part=r_pos_E[0]*r_pos_E[0];
+        y_part=r_pos_E[1]*r_pos_E[1];
+        z_part=m_parameters[1]*r_pos_E[2]*r_pos_E[2];
       }
       else if(dimensions_length_ev.size()==2){
-        x_part=r_pos[0]*r_pos[0];
-        y_part=r_pos[1]*r_pos[1];
+        x_part=r_pos_E[0]*r_pos_E[0];
+        y_part=r_pos_E[1]*r_pos_E[1];
         z_part=0;
       }
       else {
-        x_part=r_pos[0]*r_pos[0];
+        x_part=r_pos_E[0]*r_pos_E[0];
         y_part=0;
         z_part=0;
       }
@@ -101,11 +101,12 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
      //This is analytically and only works on simple gaussion functions
 
      // For non-interacting particles
-     std::vector<double> r_pos;
-     r_pos.reserve(m_system->getNumberOfDimensions());
+     //std::vector<double> r_pos_CDD;
+     //r_pos_CDD.reserve(m_system->getNumberOfDimensions());
      double wf=evaluate(particles);
      double derivate2=0;
      double x_lap, y_lap, z_lap;
+     vector<double> r_pos_CDD;
      std::vector<int> dimensions_length_CDD(m_system->getNumberOfDimensions());
      std::iota(dimensions_length_CDD.begin(), dimensions_length_CDD.end(), 0);
 
@@ -113,20 +114,24 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
      //if(m_system->getNumeric()==false){
 
        for(int i=0; i<m_system->getNumberOfParticles(); i++){
-         r_pos=particles[i]->getPosition();
-         cout<<r_pos[5]<<endl;
+
+         //r_pos_CDD.clear();
+         r_pos_CDD=particles[i]->getPosition();
+         //r_pos_CDD.push_back(temp);
+
+
          if (dimensions_length_CDD.size()==3){
-           x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
-           y_lap=(2*m_parameters[0]*r_pos[1]*r_pos[1]-1);
-           z_lap=m_parameters[1]*(2*m_parameters[0]*m_parameters[1]*r_pos[2]*r_pos[2]-1);
+           x_lap=(2*m_parameters[0]*r_pos_CDD[0]*r_pos_CDD[0]-1);
+           y_lap=(2*m_parameters[0]*r_pos_CDD[1]*r_pos_CDD[1]-1);
+           z_lap=m_parameters[1]*(2*m_parameters[0]*m_parameters[1]*r_pos_CDD[2]*r_pos_CDD[2]-1);
          }
          else if(dimensions_length_CDD.size()==2){
-           x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
-           y_lap=(2*m_parameters[0]*r_pos[1]*r_pos[1]-1);
+           x_lap=(2*m_parameters[0]*r_pos_CDD[0]*r_pos_CDD[0]-1);
+           y_lap=(2*m_parameters[0]*r_pos_CDD[1]*r_pos_CDD[1]-1);
            z_lap=0;
          }
          else {
-           x_lap=(2*m_parameters[0]*r_pos[0]*r_pos[0]-1);
+           x_lap=(2*m_parameters[0]*r_pos_CDD[0]*r_pos_CDD[0]-1);
            y_lap=0;
            z_lap=0;
          }

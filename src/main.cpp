@@ -33,7 +33,7 @@ int main() {
     int numberOfParticles   = 10;
     int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
-    double alpha            = 0.3;          // Variational parameter.
+    double alpha            = 0.7;          // Variational parameter.
     double beta             = 1;
     double timeStep         = 1;            // Metropolis time step (Importance sampling)
     double stepLength       = 1;            // Metropolis step length.
