@@ -144,7 +144,7 @@ void Sampler::computeAverages() {
     //These two are wrong?
     //m_variance = (m_cumulativeEnergy*m_energy-m_energy*m_energy)/m_system->getNumberOfMetropolisSteps();;
     //m_variance = computeVariance(energy_vec, m_energy);
-    m_acceptRatio = m_acceptedSteps / m_system->getNumberOfMetropolisSteps();//steps_min_eq;
+    m_acceptRatio = m_acceptedSteps / steps_min_eq;//m_system->getNumberOfMetropolisSteps();
 
 }
 

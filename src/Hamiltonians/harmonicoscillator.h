@@ -4,9 +4,11 @@
 
 class HarmonicOscillator : public Hamiltonian {
 public:
-    HarmonicOscillator(System* system, double omega);
+    HarmonicOscillator(System* system, double omega, double omega_z);
     double computeLocalEnergy(std::vector<Particle*> particles);
 
 private:
     double m_omega = 0;
+    double m_omega_z = 0;
+
 };

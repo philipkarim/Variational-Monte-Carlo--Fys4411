@@ -33,18 +33,24 @@ int main() {
     int numberOfParticles   = 10;
     int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
-    double alpha            = 0.7;          // Variational parameter.
-    double beta             = 1;
-    double timeStep         = 1;            // Metropolis time step (Importance sampling)
-    double stepLength       = 1;            // Metropolis step length.
+    double omega_z          = 1.0;          // Oscillator frequency z direction
+    double alpha            = 0.3;          // Variational parameter.
+    double beta             = 1;            //Beta value
+    double timeStep         = 0.25;            // Metropolis time step (Importance sampling)
+    double stepLength       = 0.1;            // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
     bool numeric            = false;         // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
+    bool spherical          =true;
     bool GD=false;
     double initialAlpha = 0.6;
 
+    if (spherical==true){
+      omega_z=omega;
+    }
+
     System* system = new System(seed);
-    system->setHamiltonian              (new HarmonicOscillator(system, omega));  //Added alpha
+    system->setHamiltonian              (new HarmonicOscillator(system, omega, omega_z));  //Added alpha
     system->setWaveFunction             (new SimpleGaussian(system, alpha, beta));
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
     system->setEquilibrationFraction    (equilibration);
@@ -54,7 +60,6 @@ int main() {
     system->setTimeStep                 (timeStep);
 
     if (GD==false){
-
       system->runMetropolisSteps          (numberOfSteps);
     }
 
