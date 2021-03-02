@@ -1,0 +1,3 @@
+/Users/philipniane/Documents/fys4411_github/Fys4411-Variational-Monte-Carlo/src_before_GD_destroyed_the_code/build/CMakeFiles/rebuild_cache.dir
+/Users/philipniane/Documents/fys4411_github/Fys4411-Variational-Monte-Carlo/src_before_GD_destroyed_the_code/build/CMakeFiles/edit_cache.dir
+/Users/philipniane/Documents/fys4411_github/Fys4411-Variational-Monte-Carlo/src_before_GD_destroyed_the_code/build/CMakeFiles/vmc.dir
