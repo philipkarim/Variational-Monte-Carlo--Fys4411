@@ -270,3 +270,11 @@ void System::setBruteforce(bool bruteforce_val) {
 void System::setTimeStep(double timeStep) {
     m_timeStep= timeStep;
 }
+
+void System::setInteraction(bool interaction) {
+    m_interaction= interaction;
+}
+
+void System::setTraplength(double a_length) {
+    m_a_length= a_length;
+}

@@ -30,18 +30,19 @@ int main() {
     //3 10 e5 false true is stable
     //Importance sampling is  stable when timestep=1
     int numberOfDimensions  = 3;
-    int numberOfParticles   = 10;
-    int numberOfSteps       = (int) 1e5;
+    int numberOfParticles   = 1;
+    int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z direction
-    double alpha            = 0.3;          // Variational parameter.
-    double beta             = 1;            //Beta value
+    double alpha            = 0.5;          // Variational parameter.
+    double beta, a_length;                   //Defined under
     double timeStep         = 0.25;            // Metropolis time step (Importance sampling)
     double stepLength       = 0.1;            // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
     bool numeric            = false;         // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
-    bool spherical          =true;
+    bool spherical          =false;
+    bool interaction        =true;
     bool GD=false;
     double initialAlpha = 0.6;
 
@@ -49,8 +50,17 @@ int main() {
       omega_z=omega;
     }
 
+    if (interaction==true){
+      beta=2.82843;
+      a_length=0.0043;
+    }
+    else{
+      a_length         =0.0;              //Trap length
+      beta             = 1.0;            //Beta value
+    }
+
     System* system = new System(seed);
-    system->setHamiltonian              (new HarmonicOscillator(system, omega, omega_z));  //Added alpha
+    system->setHamiltonian              (new HarmonicOscillator(system, omega, omega_z, beta));  //Added alpha
     system->setWaveFunction             (new SimpleGaussian(system, alpha, beta));
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
     system->setEquilibrationFraction    (equilibration);
@@ -58,6 +68,9 @@ int main() {
     system->setNumeric                  (numeric);
     system->setBruteforce               (bruteforce_val);
     system->setTimeStep                 (timeStep);
+    system->setInteraction              (interaction);
+    system->setTraplength               (a_length);
+
 
     if (GD==false){
       system->runMetropolisSteps          (numberOfSteps);

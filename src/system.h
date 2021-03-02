@@ -41,8 +41,12 @@ public:
     bool getBruteforce()                {return m_bruteforce;}
     void setTimeStep                    (double timeStep);
     double getTimeStep()                {return m_timeStep;}
+    void setInteraction                    (bool interaction);
+    double getInteraction()                {return m_interaction;}
+    void setTraplength                  (double a_length);
+    double getTraplength()                {return m_a_length;}
 
-    double gradientDescent(double initialAlpha);
+    double gradientDescent              (double initialAlpha);
     double findEnergyDerivative();
 
 
@@ -69,4 +73,6 @@ private:
     bool m_numeric;
     bool m_bruteforce;
     double m_timeStep;
+    bool m_interaction;
+    double m_a_length;
 };

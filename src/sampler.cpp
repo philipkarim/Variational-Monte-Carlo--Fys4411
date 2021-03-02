@@ -134,7 +134,7 @@ void Sampler::computeAverages() {
     /* Compute the averages of the sampled quantities. You need to think
      * thoroughly through what is written here currently; is this correct?
      */
-    double steps_min_eq=(m_system->getNumberOfMetropolisSteps()*(1-m_system->getEquilibrationFraction()));
+    double steps_min_eq=m_system->getNumberOfMetropolisSteps()*(1-m_system->getEquilibrationFraction());//std::round(m_system->getNumberOfMetropolisSteps()*(1-m_system->getEquilibrationFraction()));
     m_energy = m_cumulativeEnergy / steps_min_eq;
     m_cumulativeEnergy2 =m_cumulativeEnergy2/ steps_min_eq;
     m_variance=m_cumulativeEnergy2-(m_energy*m_energy);
