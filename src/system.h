@@ -51,6 +51,7 @@ public:
     void setgeneralwtf                  (bool generalwtf);
 
     std::vector<double>    get_GDalpha()      { return m_GDalpha; }
+    std::vector<double>    get_energyarr()      { return m_energyarr; }
 
 
     double gradientDescent              (double initialAlpha);
@@ -77,6 +78,8 @@ private:
     std::vector<class Particle*>    m_particles = std::vector<class Particle*>();
     class Random*                   m_random = nullptr;
     std::vector<double>             m_GDalpha;
+    std::vector<double>             m_energyarr;
+
 
 
     //true, false or nothing?

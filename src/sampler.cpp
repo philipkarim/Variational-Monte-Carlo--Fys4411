@@ -192,7 +192,6 @@ void Sampler::writeToFile(){
   myfile<< "Variance= "<<m_variance<<endl;
   myfile<< "AcceptanceRatio= "<<m_acceptRatio<<endl;
 
-
   myfile.close();
 
 
@@ -200,7 +199,7 @@ void Sampler::writeToFile(){
 
 
 void Sampler::writeToFileAlpha(){
-  ofstream myfile;
+  ofstream myfile2;
   string folderpart1, folderpart2, folderpart3;
 
   if (m_system->getInteraction()==true){
@@ -229,15 +228,19 @@ void Sampler::writeToFileAlpha(){
   int dimen= m_system->getNumberOfDimensions();
   //double alphi=m_system->getAlpha();
   std::vector<double> alphas_list = m_system->get_GDalpha();
+  std::vector<double> energy_list = m_system->get_energyarr();
 
-  std::string filename=folderpart1+folderpart2+folderpart3+"N="+std::to_string(parti)+"Dim="+std::to_string(dimen);
-
-  myfile.open(filename);
+  //std::string filename="datadump/test.txt";
+  std::string filename=folderpart1+folderpart2+folderpart3+"N"+std::to_string(parti)+"Dim"+std::to_string(dimen)+".txt";
+  myfile2.open(filename);
+  cout << "Alphas is being written to file.."<<endl;
   for(int i=0; i<alphas_list.size(); i++){
-      myfile<<alphas_list[i]<<endl;
+      myfile2<<alphas_list[i]<<" "<<energy_list[i]<<endl;
   }
+  cout << "Done!"<<endl;
+  cout<<endl;
 
-  myfile.close();
+  myfile2.close();
 
 
 }

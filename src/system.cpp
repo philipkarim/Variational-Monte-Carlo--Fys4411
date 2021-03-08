@@ -170,7 +170,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
     if (m_general_wtf==true){m_sampler->writeToFile();}
-    if (m_GDwtf==true){m_sampler->writeToFileAlpha();}
+    //if (m_GDwtf==true){m_sampler->writeToFileAlpha();}
 }
 
 double System::gradientDescent(double initialAlpha){
@@ -184,6 +184,7 @@ double System::gradientDescent(double initialAlpha){
     double energyDerivative;
     double tol = 1e-6;  
     vector<double> parameterss(2);
+    m_GDalpha.push_back(alpha);
 
     while (iterations < maxIterations){
         parameterss[0] = alpha;
@@ -191,10 +192,13 @@ double System::gradientDescent(double initialAlpha){
         getWaveFunction()->setParameters(parameterss);
 
         runMetropolisSteps(steepestDescentSteps);
+        
 
         energyDerivative = getSampler()->Energy_Der2();
 
         alpha += lambda*energyDerivative;
+
+        m_energyarr.push_back(m_sampler->getEnergy());
         m_GDalpha.push_back(alpha);
         iterations++;
 
@@ -221,6 +225,9 @@ double System::gradientDescent(double initialAlpha){
         }
     }
     cout<<endl;
+
+    if (m_GDwtf==true){m_sampler->writeToFileAlpha();}
+
     cout<<"Performing metropolisrun with best alpha"<<endl;
 
     //alpha = cumulativeAlpha / (maxIterations*percentAlphasToSave);

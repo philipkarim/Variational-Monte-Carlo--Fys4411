@@ -35,19 +35,19 @@ int main() {
     double timeStep         = 0.25;         // Metropolis time step (Importance sampling)
     double stepLength       = 0.5;          // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
-    bool numeric            = true;        // True->Numeric differentiation, False->Analytic
+    bool numeric            = false;        // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
-    bool interaction        = true;
-    bool GD                 = false;
-    double initialAlpha     = 0.6;          //Initial alpha to start the gradient decent
+    bool interaction        = false;
+    bool GD                 = true;
+    double initialAlpha     = 0.3;          //Initial alpha to start the gradient decent
     //Writing to file
-    bool GDwtf             =false;           //GD-Write to file
+    bool GDwtf             =true;           //GD-Write to file
     bool generalwtf        =false;           //General information- write to file
       
     double beta, a_length;                   //Defined under
     bool spherical;
 
-    
+    //Just making it easier to switch between interacting and non interacting cases
     if (interaction==true){
       beta=2.82843;
       a_length=0.0043;
@@ -55,7 +55,7 @@ int main() {
     }
     else{
       a_length         =0.0;             //Trap length
-      beta             = 1.0;            //Beta value
+      beta             =1.0;            //Beta value
       spherical=true;
     }
     if (spherical==true){
