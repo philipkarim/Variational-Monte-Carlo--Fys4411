@@ -8,18 +8,19 @@ public:
     void printOutputToTerminal();
     void computeAverages();
     void writeToFile();
+    void writeToFileAlpha();
     double computeVariance(std::vector<double> x_sample, double x_mean);
     double getEnergy()          { return m_energy; }
     double getVariance()          { return m_variance; }
     double getAcceptRatio()          { return m_acceptRatio; }
+    
+    //double getCumulativeEnergyDerivAvg()          { return m_E_Lderiv; }
+    //double getCumulativeEnergyDerivExpectAvg()          { return m_E_Lderiv_expect; }
+
+    double Energy_Der2()          { return 2*(m_E_Lderiv_expect-(m_E_Lderiv*m_energy)); }
+
 
     //double getGradientDecentValues()        { return m_cumulativeEnergy, m_cumulativeE_Lderiv, m_cumulativeE_Lderiv_expect; }
-    int getAcceptedSteps()const;
-
-    double getCumulativeEnergy() const;
-    double getCumulativeEnergyDeriv() const;
-    double getCumulativeEnergyDerivExpect() const;
-
 
 private:
     int     m_numberOfMetropolisSteps = 0;
@@ -31,9 +32,10 @@ private:
     double  m_acceptedSteps = 0;
     double  m_acceptRatio = 0;
     double time_sec;
+    double m_E_Lderiv=0;
+    double m_E_Lderiv_expect=0;
     double m_cumulativeE_Lderiv=0;
     double m_cumulativeE_Lderiv_expect=0;
-
 
     std::vector<double> energy_vec = std::vector<double>();
     class System* m_system = nullptr;

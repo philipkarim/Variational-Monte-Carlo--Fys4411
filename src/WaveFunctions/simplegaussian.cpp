@@ -17,7 +17,6 @@ SimpleGaussian::SimpleGaussian(System* system, double alpha, double beta) :
     m_parameters.reserve(2);
     m_parameters.push_back(alpha);
     m_parameters.push_back(beta);
-    //m_parameters.push_back(alpha*beta);
     m_numberOfParameters = m_parameters.size();
 
     //Add a beta value also and make the r_tot depend on beta and set beta=0

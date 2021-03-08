@@ -81,11 +81,6 @@ void Sampler::sample(bool acceptedStep) {
     m_cumulativeE_Lderiv+=E_L_deriv;
     m_cumulativeE_Lderiv_expect+=E_L_deriv*localEnergy;
 
-/*
-    grad_list[0]+=m_cumulativeEnergy;
-    grad_list[1]+=m_cumulativeE_Lderiv;
-    grad_list[2]+=m_cumulativeE_Lderiv_expect;
-*/
     if (acceptedStep){
         m_acceptedSteps++;
     }
@@ -120,8 +115,8 @@ void Sampler::printOutputToTerminal() {
     cout << " Accepted step ratio : " << m_acceptRatio << endl;
     cout << endl;
 
+/*  
     //Casually setting the mood if the code works for 1 particle in 1 dimension
-/*
     double analytical_answer_1D_N_1=0.5;
     if (m_energy==analytical_answer_1D_N_1){
       system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
@@ -139,13 +134,16 @@ void Sampler::computeAverages() {
     m_cumulativeEnergy2 =m_cumulativeEnergy2/ steps_min_eq;
     m_variance=m_cumulativeEnergy2-(m_energy*m_energy);
 
+
+
     //minus 1?
     //m_stddeviation =sqrt( /m_system->getNumberOfMetropolisSteps()-1);
     //These two are wrong?
     //m_variance = (m_cumulativeEnergy*m_energy-m_energy*m_energy)/m_system->getNumberOfMetropolisSteps();;
     //m_variance = computeVariance(energy_vec, m_energy);
     m_acceptRatio = m_acceptedSteps / steps_min_eq;//m_system->getNumberOfMetropolisSteps();
-
+    m_E_Lderiv=m_cumulativeE_Lderiv/steps_min_eq;
+    m_E_Lderiv_expect=m_cumulativeE_Lderiv_expect/steps_min_eq;
 }
 
 double Sampler::computeVariance(std::vector<double> x_sample, double x_mean){
@@ -200,22 +198,46 @@ void Sampler::writeToFile(){
 
 }
 
-int Sampler::getAcceptedSteps()const
-{
-    return m_acceptedSteps;
-}
 
-double Sampler::getCumulativeEnergy() const
-{
-    return m_cumulativeEnergy;
-}
+void Sampler::writeToFileAlpha(){
+  ofstream myfile;
+  string folderpart1, folderpart2, folderpart3;
 
-double Sampler::getCumulativeEnergyDeriv() const
-{
-    return m_cumulativeE_Lderiv;
-}
+  if (m_system->getInteraction()==true){
+    folderpart1="datadump/GDalpha/interact/";
+  }
+  else {
+    folderpart1="datadump/GDalpha/noninteract/";
+  }
 
-double Sampler::getCumulativeEnergyDerivExpect() const
-{
-    return m_cumulativeE_Lderiv_expect;
+  if (m_system->getBruteforce()==true){
+    folderpart2="bruteforce/";
+  }
+  else {
+    folderpart2 ="importancesampling/";
+  }
+
+  if (m_system->getNumeric()==true){
+    folderpart3="numeric/";
+  }
+  else {
+    folderpart3 ="analytic/";
+  }
+
+
+  int parti= m_system->getNumberOfParticles();
+  int dimen= m_system->getNumberOfDimensions();
+  //double alphi=m_system->getAlpha();
+  std::vector<double> alphas_list = m_system->get_GDalpha();
+
+  std::string filename=folderpart1+folderpart2+folderpart3+"N="+std::to_string(parti)+"Dim="+std::to_string(dimen);
+
+  myfile.open(filename);
+  for(int i=0; i<alphas_list.size(); i++){
+      myfile<<alphas_list[i]<<endl;
+  }
+
+  myfile.close();
+
+
 }

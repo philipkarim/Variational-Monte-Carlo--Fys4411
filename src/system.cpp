@@ -46,14 +46,15 @@ bool System::metropolisStep() {
      //Defining the random particle:
 
 
-    PositionOld=m_particles[random_index]->getPosition();
+     PositionOld=m_particles[random_index]->getPosition();
 
      //Choosing a random step:
      //double temp_rand=UniformNumberGenerator(gen);
-     double step=m_stepLength*(UniformNumberGenerator(gen)-0.5);
+     double step;
 
      //Start the step which gives movement of the particle
      for (int dim=0; dim<m_numberOfDimensions; dim++){
+        step=m_stepLength*(UniformNumberGenerator(gen)-0.5);
        //Try moving this random thing in the forloop
        //double temp_rand=UniformNumberGenerator(gen);
        //double step=m_stepLength*(temp_rand-0.5);
@@ -165,45 +166,46 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          }
     }
 
+    //Chooosing what to sample
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
-    //m_sampler->writeToFile();
+    if (m_general_wtf==true){m_sampler->writeToFile();}
+    if (m_GDwtf==true){m_sampler->writeToFileAlpha();}
 }
 
 double System::gradientDescent(double initialAlpha){
 //Gradient descent method to find the optimal variational parameter alpha given an initial parameter initialAlpha
-    int steepestDescentSteps = (int) 1e+3;
-    int maxIterations=10;
+    int steepestDescentSteps = (int) 1e+4;
+    int maxIterations=40;
     double alpha = initialAlpha;
     double beta = getWaveFunction()->getParameters()[1];
-    double lambda = -0.001;
+    double lambda = -0.01;
     int iterations = 0;
-    double energyDerivative = 100.;
-    double cumulativeAlpha = 0;
-    double tol = 1e-5;
-    double percentAlphasToSave = 0.3;
+    double energyDerivative;
+    double tol = 1e-6;  
+    vector<double> parameterss(2);
 
-    while (iterations < maxIterations && fabs(energyDerivative) > tol){
-        vector<double> parameterss(2);
+    while (iterations < maxIterations){
         parameterss[0] = alpha;
         parameterss[1] = beta;
-        //parameters[2] = alpha*beta;
         getWaveFunction()->setParameters(parameterss);
+
         runMetropolisSteps(steepestDescentSteps);
 
-        energyDerivative = findEnergyDerivative();
+        energyDerivative = getSampler()->Energy_Der2();
 
+        alpha += lambda*energyDerivative;
+        m_GDalpha.push_back(alpha);
+        iterations++;
 
         // Make sure we accept enough moves (with interaction can get stuck)
+        //if ((double)m_sampler->getAcceptRatio() > 0.8){
+        //    alpha += lambda*energyDerivative;
+        //    iterations++;
+        //}
 
-        if ((double)m_sampler->getAcceptedSteps() / steepestDescentSteps > 0.7){
-            alpha += lambda*energyDerivative;
-            iterations++;
-        }
-
-        cout << " New alpha = "  << alpha <<  endl;
-        cout << " Energy derivative = " << energyDerivative << endl;
-        cout << " Iterations = " << iterations << endl;
+        cout<< " New alpha = "  << alpha <<  endl;
+        cout<< " Iterations = " << iterations << endl;
 
 
         /*if ((double) iterations / maxIterations > 1-percentAlphasToSave){
@@ -212,21 +214,17 @@ double System::gradientDescent(double initialAlpha){
 */
         //alpha += lambda*energyDerivative;
         //iterations++;
-
+        if (fabs(energyDerivative) < tol){
+            cout<<endl;
+            cout<<"Alpha stabilized: Tol reached before iterator"<<endl;
+            break;
+        }
     }
+    cout<<endl;
+    cout<<"Performing metropolisrun with best alpha"<<endl;
 
     //alpha = cumulativeAlpha / (maxIterations*percentAlphasToSave);
     return alpha;
-}
-
-
-double System::findEnergyDerivative()
-{
-    double meanEnergy      = getSampler()->getCumulativeEnergy() / (m_numberOfMetropolisSteps*getEquilibrationFraction());  //1-equilibration?
-    double meanWFderiv     = getSampler()->getCumulativeEnergyDeriv() / (m_numberOfMetropolisSteps*getEquilibrationFraction());
-    double meanWFderivEloc =  getSampler()->getCumulativeEnergyDerivExpect() / (m_numberOfMetropolisSteps*getEquilibrationFraction());
-
-    return 2*(meanWFderivEloc - meanEnergy*meanWFderiv);
 }
 
 void System::setNumberOfParticles(int numberOfParticles) {
@@ -277,4 +275,16 @@ void System::setInteraction(bool interaction) {
 
 void System::setTraplength(double a_length) {
     m_a_length= a_length;
+}
+
+void System::setGD(bool GD) {
+    m_GD = GD;
+}
+
+void System::setGDwtf(bool GDwtf) {
+    m_GDwtf = GDwtf;
+}
+
+void System::setgeneralwtf(bool generalwtf) {
+    m_general_wtf = generalwtf;
 }

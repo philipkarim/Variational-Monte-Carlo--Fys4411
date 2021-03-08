@@ -26,37 +26,40 @@ int main() {
 
     int seed = 2021;
 
-    //Dim=1, particle=1 should give 0.5
-    //3 10 e5 false true is stable
-    //Importance sampling is  stable when timestep=1
     int numberOfDimensions  = 3;
-    int numberOfParticles   = 1;
-    int numberOfSteps       = (int) 1e6;
+    int numberOfParticles   = 10;
+    int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z direction
     double alpha            = 0.5;          // Variational parameter.
-    double beta, a_length;                   //Defined under
-    double timeStep         = 0.25;            // Metropolis time step (Importance sampling)
-    double stepLength       = 0.1;            // Metropolis step length.
+    double timeStep         = 0.25;         // Metropolis time step (Importance sampling)
+    double stepLength       = 0.5;          // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
-    bool numeric            = false;         // True->Numeric differentiation, False->Analytic
+    bool numeric            = true;        // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
-    bool spherical          =false;
-    bool interaction        =true;
-    bool GD=false;
-    double initialAlpha = 0.6;
+    bool interaction        = true;
+    bool GD                 = false;
+    double initialAlpha     = 0.6;          //Initial alpha to start the gradient decent
+    //Writing to file
+    bool GDwtf             =false;           //GD-Write to file
+    bool generalwtf        =false;           //General information- write to file
+      
+    double beta, a_length;                   //Defined under
+    bool spherical;
 
-    if (spherical==true){
-      omega_z=omega;
-    }
-
+    
     if (interaction==true){
       beta=2.82843;
       a_length=0.0043;
+      spherical=false;
     }
     else{
-      a_length         =0.0;              //Trap length
+      a_length         =0.0;             //Trap length
       beta             = 1.0;            //Beta value
+      spherical=true;
+    }
+    if (spherical==true){
+      omega_z=omega;
     }
 
     System* system = new System(seed);
@@ -70,7 +73,9 @@ int main() {
     system->setTimeStep                 (timeStep);
     system->setInteraction              (interaction);
     system->setTraplength               (a_length);
-
+    system->setGD                       (GD);
+    system->setGDwtf                    (GDwtf);
+    system->setgeneralwtf               (generalwtf);
 
     if (GD==false){
       system->runMetropolisSteps          (numberOfSteps);

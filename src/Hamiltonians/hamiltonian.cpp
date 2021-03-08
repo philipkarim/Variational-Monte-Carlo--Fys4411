@@ -13,7 +13,7 @@ double h, wfnext, wfprev, wf;
 double derivate2=0;
 double h2;
 
-h = 1e-4;
+h = 1e-5;
 h2=h*h;
 //might need a smaller steplength
 

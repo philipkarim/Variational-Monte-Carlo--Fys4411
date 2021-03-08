@@ -41,13 +41,21 @@ public:
     bool getBruteforce()                {return m_bruteforce;}
     void setTimeStep                    (double timeStep);
     double getTimeStep()                {return m_timeStep;}
-    void setInteraction                    (bool interaction);
-    double getInteraction()                {return m_interaction;}
+    void setInteraction                 (bool interaction);
+    double getInteraction()             {return m_interaction;}
     void setTraplength                  (double a_length);
-    double getTraplength()                {return m_a_length;}
+    double getTraplength()              {return m_a_length;}
+    void setGD                          (bool GD);
+    double getGD()                      {return m_GD;}
+    void setGDwtf                       (bool GDwtf);
+    void setgeneralwtf                  (bool generalwtf);
+
+    std::vector<double>    get_GDalpha()      { return m_GDalpha; }
+
 
     double gradientDescent              (double initialAlpha);
-    double findEnergyDerivative();
+
+    //double Energy_Der                   ();
 
 
     //double gradientDecent();
@@ -61,13 +69,15 @@ private:
     int                             m_numberOfDimensions = 0;
     int                             m_numberOfMetropolisSteps = 0;
     double                          m_equilibrationFraction = 0.0;
-    double                          m_stepLength = 0.1;
+    double                          m_stepLength;   //It said=0.1
     class WaveFunction*             m_waveFunction = nullptr;
     class Hamiltonian*              m_hamiltonian = nullptr;
     class InitialState*             m_initialState = nullptr;
     class Sampler*                  m_sampler = nullptr;
     std::vector<class Particle*>    m_particles = std::vector<class Particle*>();
     class Random*                   m_random = nullptr;
+    std::vector<double>             m_GDalpha;
+
 
     //true, false or nothing?
     bool m_numeric;
@@ -75,4 +85,8 @@ private:
     double m_timeStep;
     bool m_interaction;
     double m_a_length;
+    bool m_GD;
+    bool m_general_wtf;
+    bool m_GDwtf;
+
 };
