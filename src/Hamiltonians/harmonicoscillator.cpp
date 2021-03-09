@@ -83,12 +83,55 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
   }
 
   else{
+    double x_part, y_part, z_part;
+    std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
+    std::iota(dimensions_length.begin(), dimensions_length.end(), 0);
+    std::vector<double> r_pos_D;
+    potentialEnergy=0;
 
-    potentialEnergy=computePotentialEnergyInteracting(particles);
-    //Analytically
+   for(int i=0; i<m_system->getNumberOfParticles(); i++){
+      r_pos_D=particles[i]->getPosition();
+
+      if (dimensions_length.size()==3){
+        x_part=r_pos_D[0]*r_pos_D[0];
+        y_part=r_pos_D[1]*r_pos_D[1];
+        z_part=m_gamma*m_gamma*r_pos_D[2]*r_pos_D[2];
+      }
+      else if(dimensions_length.size()==2){
+        x_part=r_pos_D[0]*r_pos_D[0];
+        y_part=r_pos_D[1]*r_pos_D[1];
+        z_part=0;
+      }
+      else {
+        x_part=r_pos_D[0]*r_pos_D[0];
+        y_part=0;
+        z_part=0;
+      }
+
+      potentialEnergy+=0.5*(x_part+y_part+z_part);
+    }
+
+    
+    //Calculating the energy produced by interaction
+    for(int i = 0; i < m_system->getNumberOfParticles(); i++) {
+        for(int j = i+1; j < m_system->getNumberOfParticles(); j++) {
+            interactionEnergy+=computeEnergyInteracting(m_system->getParticles()[i],m_system->getParticles()[j]);
+        }
+    }
+
     kineticEnergy=m_system->getHamiltonian()->computeDoubleDerivativeNumeric(particles);
 
-    //kineticEnergy =m_system->getWaveFunction()->computeDoubleDerivativeInteraction(particles);
+/*
+    potentialEnergy=computePotentialEnergyInteracting(particles);
+    //Analytically
+
+    //Computing the kinetic energy
+    if(m_system->getNumeric()==false){
+    kineticEnergy =m_system->getWaveFunction()->computeDoubleDerivativeInteraction(particles);
+    }
+    else if(m_system->getNumeric()==true){
+    kineticEnergy=m_system->getHamiltonian()->computeDoubleDerivativeNumeric(particles);
+    }
 
     //Calculating the energy produced by interaction
     for(int i = 0; i < m_system->getNumberOfParticles(); i++) {
@@ -97,7 +140,10 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
         }
     }
 
-    return (0.5*kineticEnergy/wf + potentialEnergy+interactionEnergy);
+      return (0.5*kineticEnergy/wf + potentialEnergy+interactionEnergy);
+
+*/
+    return (kineticEnergy/wf + potentialEnergy+interactionEnergy);
 
   }
 }
