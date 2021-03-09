@@ -202,22 +202,9 @@ double System::gradientDescent(double initialAlpha){
         m_GDalpha.push_back(alpha);
         iterations++;
 
-        // Make sure we accept enough moves (with interaction can get stuck)
-        //if ((double)m_sampler->getAcceptRatio() > 0.8){
-        //    alpha += lambda*energyDerivative;
-        //    iterations++;
-        //}
-
         cout<< " New alpha = "  << alpha <<  endl;
         cout<< " Iterations = " << iterations << endl;
 
-
-        /*if ((double) iterations / maxIterations > 1-percentAlphasToSave){
-            cumulativeAlpha += alpha;
-        }
-*/
-        //alpha += lambda*energyDerivative;
-        //iterations++;
         if (fabs(energyDerivative) < tol){
             cout<<endl;
             cout<<"Alpha stabilized: Tol reached before iterator"<<endl;

@@ -28,7 +28,7 @@ int main() {
 
     int numberOfDimensions  = 3;
     int numberOfParticles   = 10;
-    int numberOfSteps       = (int) 1e4;
+    int numberOfSteps       = (int) pow(2,10);
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z direction
     double alpha            = 0.5;          // Variational parameter.
@@ -38,10 +38,10 @@ int main() {
     bool numeric            = true;        // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
     bool interaction        = true;
-    bool GD                 = false;
-    double initialAlpha     = 0.3;          //Initial alpha to start the gradient decent
+    bool GD                 = true;
+    double initialAlpha     = 0.45;          //Initial alpha to start the gradient decent
     //Writing to file
-    bool GDwtf             =false;           //GD-Write to file
+    bool GDwtf             =true;           //GD-Write to file
     bool generalwtf        =false;           //General information- write to file
       
     double beta, a_length;                   //Defined under
@@ -62,6 +62,14 @@ int main() {
       omega_z=omega;
     }
 
+    //Parallelisation
+    //int my_rank, numprocs, idum;
+    /*
+    MPI_Init (NULL,NULL);
+    MPI_Comm_size (MPI_COMM_WORLD, &numprocs);
+    MPI_Comm_rank (MPI_COMM_WORLD, &my_rank);
+    */
+
     System* system = new System(seed);
     system->setHamiltonian              (new HarmonicOscillator(system, omega, omega_z, beta));  //Added alpha
     system->setWaveFunction             (new SimpleGaussian(system, alpha, beta));
@@ -78,17 +86,24 @@ int main() {
     system->setgeneralwtf               (generalwtf);
 
     if (GD==false){
+      /*
+      MPI_Init (NULL,NULL);
+      MPI_Comm_size (MPI_COMM_WORLD, &numprocs);
+      MPI_Comm_rank (MPI_COMM_WORLD, &my_rank);
+      */
       system->runMetropolisSteps          (numberOfSteps);
+      //MPI_Finalize();
     }
 
     else{
+          //MPI_Init(NULL,NULL);
           alpha = system->gradientDescent(initialAlpha);
           vector<double> parameters(2);
           parameters[0] = alpha;
           parameters[1] = beta;
           system->getWaveFunction()->setParameters(parameters);
           system->runMetropolisSteps          (numberOfSteps);
-
+          //MPI_Finalize();
     }
     //system->gradientDecent();
 
