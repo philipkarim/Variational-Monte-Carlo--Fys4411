@@ -176,7 +176,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
 double System::gradientDescent(double initialAlpha){
 //Gradient descent method to find the optimal variational parameter alpha given an initial parameter initialAlpha
     int steepestDescentSteps = (int) 1e+3;
-    int maxIterations=40;
+    int maxIterations=35;
     double alpha = initialAlpha;
     double beta = getWaveFunction()->getParameters()[1];
     double lambda = -0.01;

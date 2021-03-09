@@ -27,19 +27,19 @@ int main() {
     int seed = 2021;
 
     int numberOfDimensions  = 3;
-    int numberOfParticles   = 10;
-    int numberOfSteps       = (int) pow(2,10);
+    int numberOfParticles   = 500;
+    int numberOfSteps       = (int) pow(2,10);  //16 or 17 would be nice
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z direction
     double alpha            = 0.5;          // Variational parameter.
     double timeStep         = 0.25;         // Metropolis time step (Importance sampling)
     double stepLength       = 0.5;          // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
-    bool numeric            = true;        // True->Numeric differentiation, False->Analytic
+    bool numeric            = false;        // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
-    bool interaction        = true;
+    bool interaction        = false;
     bool GD                 = true;
-    double initialAlpha     = 0.45;          //Initial alpha to start the gradient decent
+    double initialAlpha     = 0.3;          //Initial alpha to start the gradient decent
     //Writing to file
     bool GDwtf             =true;           //GD-Write to file
     bool generalwtf        =false;           //General information- write to file
@@ -63,7 +63,7 @@ int main() {
     }
 
     //Parallelisation
-    //int my_rank, numprocs, idum;
+    int my_rank, numprocs, idum;
     /*
     MPI_Init (NULL,NULL);
     MPI_Comm_size (MPI_COMM_WORLD, &numprocs);
