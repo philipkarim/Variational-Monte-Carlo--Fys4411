@@ -28,7 +28,7 @@ int main() {
 
     int numberOfDimensions  = 3;
     int numberOfParticles   = 10;
-    int numberOfSteps       = (int) 1e5;
+    int numberOfSteps       = (int) 1e4;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z direction
     double alpha            = 0.5;          // Variational parameter.
@@ -49,14 +49,14 @@ int main() {
 
     //Just making it easier to switch between interacting and non interacting cases
     if (interaction==true){
-      beta=2.82843;
-      a_length=0.0043;
-      spherical=false;
+      a_length=0.0043;                  //Trap length
+      beta=2.82843;                     //Beta value
+      spherical=false;                  //Trap symmetry
     }
     else{
-      a_length         =0.0;             //Trap length
+      a_length         =0.0;            //Trap length
       beta             =1.0;            //Beta value
-      spherical=true;
+      spherical=true;                   //Trap symmetry
     }
     if (spherical==true){
       omega_z=omega;

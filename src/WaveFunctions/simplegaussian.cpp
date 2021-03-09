@@ -99,23 +99,6 @@ if (m_system->getInteraction()==true){
 else{
   f_func=1.0;
 }
-/*
-//interaction
-    double r_jk;
-
-    for (int j=0; j<m_system->getNumberOfParticles();j++)
-    {
-      for (int k=j+1; k<m_system->getNumberOfParticles();k++)
-      {
-        r_jk=m_system->getR_jk(j,k);
-        if(r_jk>m_a){
-        f=f*( 1 - m_a/m_system->getR_jk(j,k) );}
-        else {return 0; }
-      }
-    }
-
-    return g*f;
-*/
 
     return g_func*f_func;
 }
@@ -131,13 +114,6 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
      * Schrödinger equation to see how the two are related).
      */
 
-     //Non interacting, probably have to add a longer bit of code and an
-     //if statement when adding the interacting case.
-     //This is analytically and only works on simple gaussion functions
-
-     // For non-interacting particles
-     //std::vector<double> r_pos_CDD;
-     //r_pos_CDD.reserve(m_system->getNumberOfDimensions());
      double wf=evaluate(particles);
      double derivate2=0;
      double x_lap, y_lap, z_lap;
@@ -165,83 +141,6 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
          }
        }
      }
-
-
-     //interacting kinetic energy
-/*   HAve a look at this
-     double a=m_system->getinteractionSize();
-
-//Interaction terms
-for(int i=0; i<m_system->getNumberOfParticles(); i++){
-    double r_i_square=0;
-    for(int d = 0; d < m_system->getNumberOfDimensions() - 1; d++){
-     r_i_square += particles.at(i).getPosition()[d]*
-                   particles.at(i).getPosition()[d];
-     }
-     int d = m_system->getNumberOfDimensions()-1;
-     r_i_square += particles.at(i).getPosition()[d]*
-                   particles.at(i).getPosition()[d]*m_parameters[1]);
-
-   double second=0;
-   double third=0;
-   double fourth=0;
-   double fifth=0;
-   double temp;
-
-   for(int j=0; j < i; j++) {
-
-       double r_ij = m_system->getDistanceMatrixij(i,j);
-
-       temp= a / ( (r_ij-a) * r_ij );
-
-       second += temp;
-
-       double r_ir_j = 0;
-       for(int d = 0; d < m_system->getNumberOfDimensions() - 1; d++){
-           r_ir_j += particles.at(i).getPosition()[d]*
-                     particles.at(j).getPosition()[d];
-       }
-       int d = m_system->getNumberOfDimensions() - 1;
-           r_ir_j += particles.at(i).getPosition()[d]*
-                     particles.at(j).getPosition()[d]*
-                     m_parameters[2]/(m_parameters[0]);
-
-       fourth-= temp * temp;
-
-       fifth -= 4 * m_parameters[0]  * (r_i_square - r_ir_j) * temp/
-               ( r_ij );
-
-   }
-   for(int j = j+1; j < m_system->getNumberOfParticles(); j++){
-
-       double r_ij = m_system->getDistanceMatrixij(i,j);
-
-       temp = a / ( (r_ij-a) * r_ij );
-
-       second += temp;
-
-       double r_ir_j = 0;
-       for(int d = 0; d < m_system->getNumberOfDimensions() - 1; d++){
-           r_ir_j += particles.at(i).getPosition()[d]*
-                     particles.at(j).getPosition()[d];
-       }
-       int d = m_system->getNumberOfDimensions() - 1;
-           r_ir_j += particles.at(i).getPosition()[d]*
-                     particles.at(j).getPosition()[d]*
-                     m_parameters[2]/(m_parameters[0]);
-
-       fourth-= temp * temp;
-
-       fifth -= 4 * m_parameters[0]  * (r_i_square - r_ir_j) * temp/
-               ( r_ij );
-   }
-
-   third=second*second;
-
-   EK_interacting+=second+third+fourth+fifth;
-
-}
-*/
 
 
     return -(DD_val*wf*m_parameters[0]);
@@ -351,18 +250,22 @@ std::vector<double> SimpleGaussian::computeQuantumForce (std::vector<double> par
 
 double SimpleGaussian::correlation(Particle* particle1, Particle* particle2) {
 
-    double rij = 0.0;
+    double r_ij = 0.0;
+    double r_i, r_j;
+    double trap_length=m_system->getTraplength();
 
     for(int dim = 0; dim < m_system->getNumberOfDimensions(); dim++) {
-        rij+= (particle1->getPosition()[dim]-particle2->getPosition()[dim])*(particle1->getPosition()[dim]-particle2->getPosition()[dim]);
+      r_i=particle1->getPosition()[dim];
+      r_j=particle2->getPosition()[dim];
+      r_ij+= (r_i-r_j)*(r_i-r_j);
     }
 
-    rij = sqrt(rij);
+    r_ij = sqrt(r_ij);
 
-    if(rij <= m_system->getTraplength()) {
+    if(r_ij <= trap_length) {
         return 0.0;
     } else {
-        return 1.0-(m_system->getTraplength()/rij);
+        return 1.0-(trap_length/r_ij);
     }
 
 }

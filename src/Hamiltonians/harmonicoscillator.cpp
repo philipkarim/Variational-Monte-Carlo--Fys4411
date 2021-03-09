@@ -30,12 +30,10 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
      * m_system->getWaveFunction()...
      */
 
-    double x_part, y_part, z_part;
     double potentialEnergy = 0;
     double kineticEnergy   = 0;
     double interactionEnergy=0;
     double wf=m_system->getWaveFunction()->evaluate(particles);
-    std::vector<double> r_pos_CLE;
 
 //    kineticEnergy=m_system->getWaveFunction()->computeDoubleDerivative(particles);
 
@@ -53,41 +51,71 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
     std::vector<int> dimensions_length_CLE(m_system->getNumberOfDimensions());
     std::iota(dimensions_length_CLE.begin(), dimensions_length_CLE.end(), 0);
 
-/*
-    for(int i=0; i<m_system->getNumberOfParticles(); i++){
-      r_pos_CLE=particles[i]->getPosition();
+    potentialEnergy=computePotentialEnergy(particles);
 
-      if (dimensions_length_CLE.size()==3){
-        x_part=r_pos_CLE[0]*r_pos_CLE[0];
-        y_part=r_pos_CLE[1]*r_pos_CLE[1];
-        z_part=r_pos_CLE[2]*r_pos_CLE[2];
+    return (kineticEnergy/wf + potentialEnergy);
+  }
+
+  else{//Interacting case
+
+    //Calculating the x,y, z parts
+    potentialEnergy=computePotentialEnergyInteracting(particles);
+    
+    //Calculating the energy produced by interaction(V_int)
+    for(int i = 0; i < m_system->getNumberOfParticles(); i++) {
+        for(int j = i+1; j < m_system->getNumberOfParticles(); j++) {
+            interactionEnergy+=computeEnergyInteracting(m_system->getParticles()[i],m_system->getParticles()[j]);
+        }
+    }
+
+    //Calculating the double derivative part
+    kineticEnergy=m_system->getHamiltonian()->computeDoubleDerivativeNumeric(particles);
+
+    return (kineticEnergy/wf + potentialEnergy+interactionEnergy);
+
+  }
+}
+
+//Potential energy noninteracting case
+double HarmonicOscillator::computePotentialEnergy(std::vector<Particle*> particles) {
+  double potentialEnergyPart=0;
+  double x_part, y_part, z_part;
+  std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
+  std::iota(dimensions_length.begin(), dimensions_length.end(), 0);
+  std::vector<double> r_pos_P;
+    
+    for(int i=0; i<m_system->getNumberOfParticles(); i++){
+      r_pos_P=particles[i]->getPosition();
+
+      if (dimensions_length.size()==3){
+        x_part=r_pos_P[0]*r_pos_P[0];
+        y_part=r_pos_P[1]*r_pos_P[1];
+        z_part=r_pos_P[2]*r_pos_P[2];
       }
-      else if(dimensions_length_CLE.size()==2){
-        x_part=r_pos_CLE[0]*r_pos_CLE[0];
-        y_part=r_pos_CLE[1]*r_pos_CLE[1];
+      else if(dimensions_length.size()==2){
+        x_part=r_pos_P[0]*r_pos_P[0];
+        y_part=r_pos_P[1]*r_pos_P[1];
         z_part=0;
       }
       else {
-        x_part=r_pos_CLE[0]*r_pos_CLE[0];
+        x_part=r_pos_P[0]*r_pos_P[0];
         y_part=0;
         z_part=0;
       }
 
       potentialEnergyPart+=(x_part+y_part+z_part);
     }
-    potentialEnergy=0.5*potentialEnergyPart*m_omega*m_omega;
-*/
-    potentialEnergy=computePotentialEnergy(particles);
+    return 0.5*potentialEnergyPart*m_omega*m_omega;
 
-    return (kineticEnergy/wf + potentialEnergy);
-  }
+}
 
-  else{
+//Potential energy interacting case(Technically just the xyz part og the Ep)
+double HarmonicOscillator::computePotentialEnergyInteracting(std::vector<Particle*> particles) {
     double x_part, y_part, z_part;
     std::vector<int> dimensions_length(m_system->getNumberOfDimensions());
     std::iota(dimensions_length.begin(), dimensions_length.end(), 0);
     std::vector<double> r_pos_D;
-    potentialEnergy=0;
+    double PE=0;
 
    for(int i=0; i<m_system->getNumberOfParticles(); i++){
       r_pos_D=particles[i]->getPosition();
@@ -108,96 +136,32 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
         z_part=0;
       }
 
-      potentialEnergy+=0.5*(x_part+y_part+z_part);
+      PE+=x_part+y_part+z_part;
     }
 
-    
-    //Calculating the energy produced by interaction
-    for(int i = 0; i < m_system->getNumberOfParticles(); i++) {
-        for(int j = i+1; j < m_system->getNumberOfParticles(); j++) {
-            interactionEnergy+=computeEnergyInteracting(m_system->getParticles()[i],m_system->getParticles()[j]);
-        }
-    }
+    return 0.5*PE;
 
-    kineticEnergy=m_system->getHamiltonian()->computeDoubleDerivativeNumeric(particles);
-
-/*
-    potentialEnergy=computePotentialEnergyInteracting(particles);
-    //Analytically
-
-    //Computing the kinetic energy
-    if(m_system->getNumeric()==false){
-    kineticEnergy =m_system->getWaveFunction()->computeDoubleDerivativeInteraction(particles);
-    }
-    else if(m_system->getNumeric()==true){
-    kineticEnergy=m_system->getHamiltonian()->computeDoubleDerivativeNumeric(particles);
-    }
-
-    //Calculating the energy produced by interaction
-    for(int i = 0; i < m_system->getNumberOfParticles(); i++) {
-        for(int j = i+1; j < m_system->getNumberOfParticles(); j++) {
-            interactionEnergy+=computeEnergyInteracting(m_system->getParticles()[i],m_system->getParticles()[j]);
-        }
-    }
-
-      return (0.5*kineticEnergy/wf + potentialEnergy+interactionEnergy);
-
-*/
-    return (kineticEnergy/wf + potentialEnergy+interactionEnergy);
-
-  }
-}
-
-double HarmonicOscillator::computePotentialEnergy(std::vector<Particle*> particles) {
-
-  double potentialEnergyPart=0;
-      for(int i=0; i<m_system->getNumberOfParticles(); i++){
-        for(int dim=0; dim<m_system->getNumberOfDimensions(); dim++){
-          if (dim==2){
-            potentialEnergyPart += m_omega_z*m_omega_z*particles[i]->getPosition()[dim]*particles[i]->getPosition()[dim];
-          }
-          else{
-          potentialEnergyPart += m_omega*m_omega*particles[i]->getPosition()[dim]*particles[i]->getPosition()[dim];
-          }
-        }
-      }
-
-      return 0.5*potentialEnergyPart;
-}
-
-double HarmonicOscillator::computePotentialEnergyInteracting(std::vector<Particle*> particles) {
-
-  double potentialEnergyPart=0;
-      for(int i=0; i<m_system->getNumberOfParticles(); i++){
-        double r2 = 0;
-        for(int dim=0; dim<m_system->getNumberOfDimensions(); dim++){
-          if (dim==2){
-            r2 += m_gamma*m_gamma*particles[i]->getPosition()[dim]*particles[i]->getPosition()[dim];
-          }
-          else{
-            r2 += particles[i]->getPosition()[dim]*particles[i]->getPosition()[dim];
-          }
-        }
-
-      potentialEnergyPart+=r2;
-      }
-
-      return 0.5*potentialEnergyPart;
 }
 
 //Computing the energy produced by boson-boson interaction
 double HarmonicOscillator::computeEnergyInteracting(Particle* particle1, Particle* particle2) {
-  double rij = 0.0;
+  double r_ij = 0.0;
+  double r_i, r_j;
+  double trap_length=m_system->getTraplength();
+  int infinity= (2^31) - 1;     //Maximum c++ value
 
   for(int dim = 0; dim < m_system->getNumberOfDimensions(); dim++) {
-      rij+= (particle1->getPosition()[dim]-particle2->getPosition()[dim])*(particle1->getPosition()[dim]-particle2->getPosition()[dim]);
+    r_i=particle1->getPosition()[dim];
+    r_j=particle2->getPosition()[dim];
+    r_ij+= (r_i-r_j)*(r_i-r_j);
   }
 
-  rij = sqrt(rij);
-
-  if(rij <= m_system->getTraplength()) {
-      return 1e10;
-  } else {
+  r_ij = sqrt(r_ij);
+  
+  if(r_ij <= trap_length){
+      return infinity;
+  }
+  else{
       return 0.0;
   }
 
