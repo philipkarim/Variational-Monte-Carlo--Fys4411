@@ -162,7 +162,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          //If statement to send the accepted steps into the sampler
          //after the system is at rest
          if (i>=numberOfMetropolisSteps*m_equilibrationFraction){
-            m_sampler->sample(acceptedStep);
+            m_sampler->sample(acceptedStep, i);
          }
     }
 

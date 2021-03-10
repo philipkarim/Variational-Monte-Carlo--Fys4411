@@ -13,7 +13,7 @@ double h, wfnext, wfprev, wf;
 double derivate2=0;
 double h2;
 
-h = 1e-5;
+h = 1e-3;
 h2=h*h;
 //might need a smaller steplength
 
@@ -30,8 +30,8 @@ for (int i = 0; i<m_system->getNumberOfParticles(); i++){
         // The position now
         particles[i]->adjustPosition(h, dim);
 
-        derivate2 -= (wfnext+wfprev-2*wf)/h2;
+        derivate2 -= (wfnext+wfprev-2*wf);
     }
 }
-return 0.5*derivate2;
+return 0.5*derivate2/h2;
 }

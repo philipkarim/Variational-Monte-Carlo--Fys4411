@@ -32,7 +32,7 @@ void Sampler::setNumberOfMetropolisSteps(int steps) {
     m_numberOfMetropolisSteps = steps;
 }
 
-void Sampler::sample(bool acceptedStep) {
+void Sampler::sample(bool acceptedStep, int MCstep) {
     // Make sure the sampling variable(s) are initialized at the first step.
     if (m_stepNumber == 0) {
         m_cumulativeEnergy = 0;
@@ -56,6 +56,11 @@ void Sampler::sample(bool acceptedStep) {
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
 	  duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
     time_sec += time_span.count();
+
+    //Saving values to be used in blocking
+    if (meanenergy_list.size()<pow(2,16)){
+      meanenergy_list.push_back(localEnergy);
+    }
 
     //making an energy vector in search of the correct variance
     energy_vec.push_back(localEnergy);
@@ -162,35 +167,39 @@ void Sampler::writeToFile(){
   string folderpart1, folderpart2;
 
   if (m_system->getBruteforce()==true){
-    folderpart1="datadump/bruteforce/";
+    folderpart1="Results/bruteforce/";
   }
   else {
-    folderpart1 ="datadump/importancesampling/";
+    folderpart1 ="Results/importancesampling/";
   }
 
   if (m_system->getNumeric()==true){
-    folderpart2="numeric/setalpha/";
+    folderpart2="numeric/";
   }
   else {
-    folderpart2 ="analytic/setalpha/";
+    folderpart2 ="analytic/";
   }
 
   int parti= m_system->getNumberOfParticles();
   int dimen= m_system->getNumberOfDimensions();
   //double alphi=m_system->getAlpha();
-  std::vector<double> pa2 = m_system->getWaveFunction()->getParameters();
+  //std::vector<double> pa2 = m_system->getWaveFunction()->getParameters();
+  //std::vector<double> mean_energy = m_system->get_meanE();
 
   //fix to make alpha and numeric global
 
   std::string filename=folderpart1+folderpart2+"N="+std::to_string(parti)+"Dim="+std::to_string(dimen);
 
   myfile.open(filename);
-  myfile<< "Particles= " << parti << endl;
-  myfile<< "Dimensions= "<<dimen<<endl;
-  myfile<< "Energy= "<<m_energy<<endl;
-  myfile<< "Alpha= "<<pa2.at(0)<<endl;
-  myfile<< "Variance= "<<m_variance<<endl;
-  myfile<< "AcceptanceRatio= "<<m_acceptRatio<<endl;
+  //myfile<< "Variance= "<<m_variance<<endl;
+  //myfile<< "AcceptanceRatio= "<<m_acceptRatio<<endl;
+
+  cout << "Mean energies are being written to file.."<<endl;
+  for(int i=0; i<meanenergy_list.size(); i++){
+    myfile<<meanenergy_list[i]<<endl;
+  }
+  cout << "Done!"<<endl;
+  cout<<endl;
 
   myfile.close();
 
@@ -203,10 +212,10 @@ void Sampler::writeToFileAlpha(){
   string folderpart1, folderpart2, folderpart3;
 
   if (m_system->getInteraction()==true){
-    folderpart1="datadump/GDalpha/interact/";
+    folderpart1="Results/GDalpha/interact/";
   }
   else {
-    folderpart1="datadump/GDalpha/noninteract/";
+    folderpart1="Results/GDalpha/noninteract/";
   }
 
   if (m_system->getBruteforce()==true){
@@ -233,7 +242,7 @@ void Sampler::writeToFileAlpha(){
   //std::string filename="datadump/test.txt";
   std::string filename=folderpart1+folderpart2+folderpart3+"N"+std::to_string(parti)+"Dim"+std::to_string(dimen)+".txt";
   myfile2.open(filename);
-  cout << "Alphas is being written to file.."<<endl;
+  cout << "Alphas are being written to file.."<<endl;
   for(int i=0; i<alphas_list.size(); i++){
       myfile2<<alphas_list[i]<<" "<<energy_list[i]<<endl;
   }
