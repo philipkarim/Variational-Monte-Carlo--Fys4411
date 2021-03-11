@@ -9,6 +9,7 @@ public:
     void computeAverages();
     void writeToFile();
     void writeToFileAlpha();
+    void writeToFileOBD();
     double computeVariance(std::vector<double> x_sample, double x_mean);
     double getEnergy()          { return m_energy; }
     double getVariance()          { return m_variance; }

@@ -49,19 +49,20 @@ public:
     double getGD()                      {return m_GD;}
     void setGDwtf                       (bool GDwtf);
     void setgeneralwtf                  (bool generalwtf);
-
-    std::vector<double>    get_GDalpha()      { return m_GDalpha; }
-    std::vector<double>    get_energyarr()      { return m_energyarr; }
-
+    void setobd                         (bool obdwtf, double bucketSize, int bins);
+    int getBins()                       {return m_bins;}
+    double getBucketSize()              {return m_bucketSize;}
+    bool getObd()                       {return m_obdwtf;}
+    std::vector<double>get_GDalpha()    { return m_GDalpha; }
+    std::vector<double>get_energyarr()  { return m_energyarr; }
 
     double gradientDescent              (double initialAlpha);
+    void oneBodyDensity();
 
-    //double Energy_Der                   ();
+    std::vector<int>m_histogram;
+    void setHistogram();
+    std::vector<int>getHistogram()      { return m_histogram; }
 
-
-    //double gradientDecent();
-    //double E_LDerivative                (double alpha_n);
-    //bool getNumeric()          { return m_numeric; }
 
 
 
@@ -81,8 +82,7 @@ private:
     std::vector<double>             m_energyarr;
 
 
-
-    //true, false or nothing?
+   //Just some variables, mostly bools
     bool m_numeric;
     bool m_bruteforce;
     double m_timeStep;
@@ -91,5 +91,8 @@ private:
     bool m_GD;
     bool m_general_wtf;
     bool m_GDwtf;
+    bool m_obdwtf;
+    double m_bucketSize;
+    int m_bins;
 
 };

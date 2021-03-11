@@ -86,6 +86,10 @@ void Sampler::sample(bool acceptedStep, int MCstep) {
     m_cumulativeE_Lderiv+=E_L_deriv;
     m_cumulativeE_Lderiv_expect+=E_L_deriv*localEnergy;
 
+    if (m_system->getObd()==true){
+      m_system->oneBodyDensity();
+      }
+
     if (acceptedStep){
         m_acceptedSteps++;
     }
@@ -206,7 +210,6 @@ void Sampler::writeToFile(){
 
 }
 
-
 void Sampler::writeToFileAlpha(){
   ofstream myfile2;
   string folderpart1, folderpart2, folderpart3;
@@ -251,5 +254,40 @@ void Sampler::writeToFileAlpha(){
 
   myfile2.close();
 
+}
 
+void Sampler::writeToFileOBD(){
+  ofstream myfile3;
+  string folderpart1;
+
+  //Switch to getJastrow
+  if (m_system->getInteraction()==true){
+    folderpart1="Results/onebodydensity/jastrow/";
+  }
+  else {
+    folderpart1="Results/onebodydensity/nonjastrow/";
+  }
+
+  int parti= m_system->getNumberOfParticles();
+  int dimen= m_system->getNumberOfDimensions();
+  int s_bins=m_system->getBins();
+  double s_bucketSize=m_system->getBucketSize();
+  int s_steps=m_system->getNumberOfMetropolisSteps();
+  double s_fraction=m_system->getEquilibrationFraction();
+  //double alphi=m_system->getAlpha();
+  std::vector<int> s_histogram = m_system->getHistogram();
+
+  //std::string filename="datadump/test.txt";
+  std::string filename=folderpart1+"N"+std::to_string(parti)+"Dim"+std::to_string(dimen)+".txt";
+  myfile3.open(filename);
+  cout << "One body density is being written to file.."<<endl;
+
+  for(int i=0; i<s_bins; i++){
+    myfile3 << double(s_histogram[i]) /(parti*s_steps*s_fraction*s_bucketSize)
+    << "    " << i*s_bucketSize << endl;
+  }
+  cout << "Done!"<<endl;
+  cout<<endl;
+
+  myfile3.close();
 }

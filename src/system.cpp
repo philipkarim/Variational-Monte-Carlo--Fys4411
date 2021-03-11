@@ -144,6 +144,9 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
     bool acceptedStep;
+
+    setHistogram();
+
     for (int i=0; i < numberOfMetropolisSteps; i++) {
       if (m_bruteforce==true){
         acceptedStep = metropolisStep();
@@ -171,6 +174,8 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     m_sampler->printOutputToTerminal();
     if (m_general_wtf==true){m_sampler->writeToFile();}
     //if (m_GDwtf==true){m_sampler->writeToFileAlpha();}
+    if (m_obdwtf==true){m_sampler->writeToFileOBD();}
+    
 }
 
 double System::gradientDescent(double initialAlpha){
@@ -219,6 +224,28 @@ double System::gradientDescent(double initialAlpha){
 
     //alpha = cumulativeAlpha / (maxIterations*percentAlphasToSave);
     return alpha;
+}
+
+void System::oneBodyDensity(){
+    //Function to make the histrograms needed to compute the one body density
+    vector<int> histogram(m_bins);
+    int bucket;
+    double r2 = 0;
+    for (int j=0; j<getNumberOfParticles(); j++){
+        r2 = 0;
+
+        for (int d=0; d<getNumberOfDimensions(); d++){
+            r2 += m_particles.at(j)->getPosition()[d]*m_particles.at(j)->getPosition()[d];
+        }
+        r2 = sqrt(r2);
+        bucket = int(floor(r2/m_bucketSize));
+        histogram[bucket] += 1;
+    }
+
+    // Update histogram
+    for (int k=0; k<m_bins; k++){
+       m_histogram[k] += histogram[k];
+    }
 }
 
 void System::setNumberOfParticles(int numberOfParticles) {
@@ -281,4 +308,15 @@ void System::setGDwtf(bool GDwtf) {
 
 void System::setgeneralwtf(bool generalwtf) {
     m_general_wtf = generalwtf;
+}
+
+void System::setobd(bool obdwtf, double bucketSize, int bins){
+    m_obdwtf = obdwtf;
+    m_bucketSize=bucketSize;
+    m_bins=bins;
+}
+
+void System::setHistogram(){
+    vector<int> histogram(getBins());
+    m_histogram = histogram;
 }

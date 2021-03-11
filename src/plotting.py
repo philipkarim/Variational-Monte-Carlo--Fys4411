@@ -42,7 +42,7 @@ plt.ylabel(r'$E_L (\hbar \omega)$',fontsize=16)
 
 #Dim=3, particles=10, interacting, 2^16 steps
 a_int=  [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7]
-el_int= [28.13, 25,76]
+el_int= [28.13, 25.76, 24.83, 24.55, 24.39, 24.54, 24.72, 25.15, 25.79]
 
 plt.plot(a_int, el_int)
 plt.plot(a_int, el_int, 'ro', markersize=3)
