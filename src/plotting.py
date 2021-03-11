@@ -38,7 +38,7 @@ plt.plot(a_nonint, el_nonint)
 plt.plot(a_nonint, el_nonint, 'ro', markersize=3)
 plt.xlabel(r'$\alpha$',fontsize=16)
 plt.ylabel(r'$E_L (\hbar \omega)$',fontsize=16)
-#plt.show()
+plt.show()
 
 #Dim=3, particles=10, interacting, 2^16 steps
 a_int=  [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7]

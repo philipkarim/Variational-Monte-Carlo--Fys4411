@@ -261,11 +261,11 @@ void Sampler::writeToFileOBD(){
   string folderpart1;
 
   //Switch to getJastrow
-  if (m_system->getInteraction()==true){
-    folderpart1="Results/onebodydensity/jastrow/";
+  if (m_system->getTraplength()==0){
+    folderpart1="Results/onebodydensity/nonjastrow/";
   }
   else {
-    folderpart1="Results/onebodydensity/nonjastrow/";
+    folderpart1="Results/onebodydensity/jastrow/";
   }
 
   int parti= m_system->getNumberOfParticles();

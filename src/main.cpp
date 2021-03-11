@@ -51,7 +51,8 @@ int main() {
 
     //Just making it easier to switch between interacting and non interacting cases
     if (interaction==true){
-      a_length=0.0043;                  //Trap length
+      a_length=0;
+      //a_length=0.0043;                  //Trap length
       beta=2.82843;                     //Beta value
       spherical=false;                  //Trap symmetry
     }

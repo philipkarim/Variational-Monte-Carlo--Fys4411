@@ -226,6 +226,7 @@ double System::gradientDescent(double initialAlpha){
     return alpha;
 }
 
+/*
 void System::oneBodyDensity(){
     //Function to make the histrograms needed to compute the one body density
     vector<int> histogram(m_bins);
@@ -245,6 +246,18 @@ void System::oneBodyDensity(){
     // Update histogram
     for (int k=0; k<m_bins; k++){
        m_histogram[k] += histogram[k];
+    }
+}
+*/
+
+void System::setOneBodyDensity(double min, double max, int numberOfBins) {
+    m_numberOfBins = numberOfBins;
+    m_min = min;
+    m_max = max;
+    m_binWidth = (max - min) / numberOfBins;
+    m_bins = (double**) calloc(m_system->getNumberOfDimensions(), sizeof(double*));
+    for (int i=0; i<m_system->getNumberOfDimensions(); i++) {
+        m_bins[i] = (double*) calloc(m_numberOfBins, sizeof(double));
     }
 }
 
