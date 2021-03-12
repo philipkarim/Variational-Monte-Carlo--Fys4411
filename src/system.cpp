@@ -226,7 +226,31 @@ double System::gradientDescent(double initialAlpha){
     return alpha;
 }
 
-/*
+void System::checkStep(double stepLength, double timeStep){
+    setStepLength               (stepLength);
+    setTimeStep                 (timeStep);
+    int steps = 0;
+    int maxsteps=1000000;
+    vector<int> steps_list=vector<int>();
+    vector<double> meanEL_list=vector<double>();
+
+    while (steps < maxsteps){
+        runMetropolisSteps(steps);
+
+        steps_list.push_back(steps);
+        meanEL_list.push_back(m_sampler->getEnergy());
+
+        cout<< " Running: "  << steps*100/maxsteps << " %" << endl;
+
+        steps+=10000;
+    }
+
+    m_sampler->writeToFileSteps(steps_list, meanEL_list);
+
+}
+
+
+
 void System::oneBodyDensity(){
     //Function to make the histrograms needed to compute the one body density
     vector<int> histogram(m_bins);
@@ -248,8 +272,8 @@ void System::oneBodyDensity(){
        m_histogram[k] += histogram[k];
     }
 }
-*/
 
+/*
 void System::setOneBodyDensity(double min, double max, int numberOfBins) {
     m_numberOfBins = numberOfBins;
     m_min = min;
@@ -260,6 +284,7 @@ void System::setOneBodyDensity(double min, double max, int numberOfBins) {
         m_bins[i] = (double*) calloc(m_numberOfBins, sizeof(double));
     }
 }
+*/
 
 void System::setNumberOfParticles(int numberOfParticles) {
     m_numberOfParticles = numberOfParticles;

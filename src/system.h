@@ -41,10 +41,12 @@ public:
     bool getBruteforce()                {return m_bruteforce;}
     void setTimeStep                    (double timeStep);
     double getTimeStep()                {return m_timeStep;}
+    double getStepLength()               {return m_stepLength;}
     void setInteraction                 (bool interaction);
     double getInteraction()             {return m_interaction;}
     void setTraplength                  (double a_length);
     double getTraplength()              {return m_a_length;}
+    void checkStep                      (double stepLength, double timeStep);
     void setGD                          (bool GD);
     double getGD()                      {return m_GD;}
     void setGDwtf                       (bool GDwtf);

@@ -35,16 +35,17 @@ int main() {
     double timeStep         = 0.25;         // Metropolis time step (Importance sampling)
     double stepLength       = 0.5;          // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
-    bool numeric            = true;        // True->Numeric differentiation, False->Analytic
+    bool check_step         = true;
+    bool numeric            = false;        // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
-    bool interaction        = true;
+    bool interaction        = false;
     bool GD                 = false;
     double initialAlpha     = 0.3;          //Initial alpha to start the gradient decent
-    bool onebodydensity     =true;         //Extracting the positions to be used on the one body density
+    bool onebodydensity     =false;         //Extracting the positions to be used on the one body density
     //Writing to file
     bool GDwtf             =false;           //GD-Write to file
     bool generalwtf        =false;           //General information- write to file
-    bool obdwtf            =true;           //One body density write to file
+    bool obdwtf            =false;           //One body density write to file
 
     double beta, a_length;                   //Defined under
     bool spherical;
@@ -79,10 +80,8 @@ int main() {
     system->setWaveFunction             (new SimpleGaussian(system, alpha, beta));
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
     system->setEquilibrationFraction    (equilibration);
-    system->setStepLength               (stepLength);
     system->setNumeric                  (numeric);
     system->setBruteforce               (bruteforce_val);
-    system->setTimeStep                 (timeStep);
     system->setInteraction              (interaction);
     system->setTraplength               (a_length);
     system->setGD                       (GD);
@@ -96,29 +95,33 @@ int main() {
       system->setobd                    (obdwtf, bucketSize, bins);
     }
 
-    if (GD==false){
+    if (GD==true){
+      //MPI_Init(NULL,NULL);
+      system->setTimeStep                 (timeStep);
+      system->setStepLength               (stepLength);
+      alpha = system->gradientDescent(initialAlpha);
+      vector<double> parameters(2);
+      parameters[0] = alpha;
+      parameters[1] = beta;
+      system->getWaveFunction()->setParameters(parameters);
+      system->runMetropolisSteps           (numberOfSteps);
+      //MPI_Finalize();
+    }
+    else if(GD==false && check_step==true){
+      system->checkStep(stepLength, timeStep);
+      }
+    else{
       /*
       MPI_Init (NULL,NULL);
       MPI_Comm_size (MPI_COMM_WORLD, &numprocs);
       MPI_Comm_rank (MPI_COMM_WORLD, &my_rank);
       */
+      system->setTimeStep                 (timeStep);
+      system->setStepLength               (stepLength);
       system->runMetropolisSteps          (numberOfSteps);
       //MPI_Finalize();
     }
-
-    else{
-          //MPI_Init(NULL,NULL);
-          alpha = system->gradientDescent(initialAlpha);
-          vector<double> parameters(2);
-          parameters[0] = alpha;
-          parameters[1] = beta;
-          system->getWaveFunction()->setParameters(parameters);
-          system->runMetropolisSteps          (numberOfSteps);
-          //MPI_Finalize();
-    }
-    //system->gradientDecent();
-
-    //system->setNumberOfParticles        (numeric)
+  
 
     //MPI_Finalize ();
 

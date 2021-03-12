@@ -256,6 +256,37 @@ void Sampler::writeToFileAlpha(){
 
 }
 
+void Sampler::writeToFileSteps(std::vector<int> steps_list, std::vector<double> meanEL_list){
+  ofstream myfile4;
+  string folderpart1, folderpart2;
+  
+  if (m_system->getBruteforce()==true){
+    folderpart1="Results/steps/bruteforce/";
+    folderpart2="steplength"+std::to_string(m_system->getStepLength());
+  }
+  else {
+    folderpart1 ="Results/steps/importancesampling/";
+    folderpart2="timestep"+std::to_string(m_system->getTimeStep());
+  }
+
+  int parti= m_system->getNumberOfParticles();
+  int dimen= m_system->getNumberOfDimensions();
+
+  //std::string filename="datadump/test.txt";
+  std::string filename=folderpart1+folderpart2+"N"+std::to_string(parti)+"Dim"+std::to_string(dimen)+".txt";
+  myfile4.open(filename);
+  cout << "Steps and energies are being written to file.."<<endl;
+  for(int i=0; i<steps_list.size(); i++){
+      myfile4<<steps_list[i]<<" "<<meanEL_list[i]<<endl;
+  }
+  cout << "Done!"<<endl;
+  cout<<endl;
+
+  myfile4.close();
+
+}
+
+
 void Sampler::writeToFileOBD(){
   ofstream myfile3;
   string folderpart1;

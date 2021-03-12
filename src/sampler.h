@@ -9,6 +9,7 @@ public:
     void computeAverages();
     void writeToFile();
     void writeToFileAlpha();
+    void writeToFileSteps(std::vector<int> steps_list, std::vector<double> meanEL_list);
     void writeToFileOBD();
     double computeVariance(std::vector<double> x_sample, double x_mean);
     double getEnergy()          { return m_energy; }
