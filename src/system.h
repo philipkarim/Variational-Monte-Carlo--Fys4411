@@ -73,7 +73,7 @@ private:
     int                             m_numberOfDimensions = 0;
     int                             m_numberOfMetropolisSteps = 0;
     double                          m_equilibrationFraction = 0.0;
-    double                          m_stepLength;   //It said=0.1
+    double                          m_stepLength=0.5;   //It said=0.1
     class WaveFunction*             m_waveFunction = nullptr;
     class Hamiltonian*              m_hamiltonian = nullptr;
     class InitialState*             m_initialState = nullptr;
@@ -87,7 +87,7 @@ private:
    //Just some variables, mostly bools
     bool m_numeric;
     bool m_bruteforce;
-    double m_timeStep;
+    double m_timeStep=0.25;
     bool m_interaction;
     double m_a_length;
     bool m_GD;

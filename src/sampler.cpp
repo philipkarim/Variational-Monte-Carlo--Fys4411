@@ -6,6 +6,7 @@
 #include "particle.h"
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
+ #include <iomanip>
 
 //Write to file modules
 #include <fstream>
@@ -58,7 +59,7 @@ void Sampler::sample(bool acceptedStep, int MCstep) {
     time_sec += time_span.count();
 
     //Saving values to be used in blocking
-    if (meanenergy_list.size()<pow(2,16)){
+    if (meanenergy_list.size()<pow(2,18)){
       meanenergy_list.push_back(localEnergy);
     }
 
@@ -167,7 +168,7 @@ double Sampler::computeVariance(std::vector<double> x_sample, double x_mean){
 }
 
 void Sampler::writeToFile(){
-  ofstream myfile;
+  ofstream myfile, myfiletime;
   string folderpart1, folderpart2;
 
   if (m_system->getBruteforce()==true){
@@ -193,14 +194,19 @@ void Sampler::writeToFile(){
   //fix to make alpha and numeric global
 
   std::string filename=folderpart1+folderpart2+"N="+std::to_string(parti)+"Dim="+std::to_string(dimen);
+  std::string filenametime=folderpart1+folderpart2+"time/"+"N="+std::to_string(parti)+"Dim="+std::to_string(dimen);
 
   myfile.open(filename);
+  myfiletime.open(filenametime);
   //myfile<< "Variance= "<<m_variance<<endl;
   //myfile<< "AcceptanceRatio= "<<m_acceptRatio<<endl;
 
   cout << "Mean energies are being written to file.."<<endl;
+  myfiletime<<time_sec<<endl;
+  myfiletime.close();
+
   for(int i=0; i<meanenergy_list.size(); i++){
-    myfile<<meanenergy_list[i]<<endl;
+    myfile<< std::fixed << std::setprecision(8) <<meanenergy_list[i]<<endl;
   }
   cout << "Done!"<<endl;
   cout<<endl;
@@ -211,6 +217,7 @@ void Sampler::writeToFile(){
 }
 
 void Sampler::writeToFileAlpha(){
+  cout<<"Derivative="<<Energy_Der2()<<endl;
   ofstream myfile2;
   string folderpart1, folderpart2, folderpart3;
 

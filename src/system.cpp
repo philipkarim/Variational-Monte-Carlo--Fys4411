@@ -167,6 +167,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          if (i>=numberOfMetropolisSteps*m_equilibrationFraction){
             m_sampler->sample(acceptedStep, i);
          }
+         //cout<<"The current step is "<<i<<endl;
     }
 
     //Chooosing what to sample
@@ -187,7 +188,7 @@ double System::gradientDescent(double initialAlpha){
     double lambda = -0.01;
     int iterations = 0;
     double energyDerivative;
-    double tol = 1e-6;  
+    double tol = 1e-5;
     vector<double> parameterss(2);
     m_GDalpha.push_back(alpha);
 
@@ -198,10 +199,11 @@ double System::gradientDescent(double initialAlpha){
 
         runMetropolisSteps(steepestDescentSteps);
         
-
         energyDerivative = getSampler()->Energy_Der2();
 
         alpha += lambda*energyDerivative;
+
+        cout<<energyDerivative<<endl;
 
         m_energyarr.push_back(m_sampler->getEnergy());
         m_GDalpha.push_back(alpha);
