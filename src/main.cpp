@@ -20,18 +20,18 @@ int main() {
     int seed = 2021;
 
     int numberOfDimensions  = 3;
-    int numberOfParticles   = 100;
-    int numberOfSteps       = (int) pow(2,18);  //16 or 17 would be nice
+    int numberOfParticles   = 50;
+    int numberOfSteps       = (int) pow(2,16);  //16 or 17 would be nice
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z direction
-    double alpha            = 0.5;          // Variational parameter.
+    double alpha            = 0.495;          // Variational parameter.
     double timeStep         = 0.25;         // Metropolis time step (Importance sampling)
     double stepLength       = 0.5;          // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
     bool check_step         = false;
     bool numeric            = true;        // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
-    bool interaction        = false;
+    bool interaction        = true;
     bool GD                 = false;
     double initialAlpha     = 0.3;          //Initial alpha to start the gradient decent
     bool collectresults     =true;           //True-> aquiring large amount of results in parallel
@@ -84,14 +84,59 @@ int main() {
     //Gradient decent method
     if (GD==true){
       if (collectresults==true){
-        int pid, pid1;
+        int pid, pid1, pid2, pid3, pid4, pid5, pid6;
 
-        pid=fork();       if (pid==0){system->setInitialState(new RandomUniform(system, 3, 50));
+        pid=fork();       if (pid==0){system->setInitialState(new RandomUniform(system, 3, 10));
+                              alpha = system->gradientDescent(0.3);}
+        else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 3, 10));
+                              alpha = system->gradientDescent(0.7);}
+        
+        /*else{pid2=fork();if (pid2==0){system->setInitialState(new RandomUniform(system, 3, 100));
+                              alpha = system->gradientDescent(0.3);}
+
+        else{pid3=fork();if (pid3==0){system->setInitialState(new RandomUniform(system, 3, 10));
+                                      system->setWaveFunction(new SimpleGaussian(system, 0.5, 2.82843));
+                                      system->setTraplength(0.0043);
+                                      system->setNumeric(true);
+                                      interaction=true;
+                                      spherical=false;
                               alpha = system->gradientDescent(0.4);}
-        else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 3, 1));
-                              alpha = system->gradientDescent(0.4);}
+
+        else{pid4=fork();if (pid4==0){system->setInitialState(new RandomUniform(system, 3, 50));
+                                      system->setWaveFunction(new SimpleGaussian(system, 0.5, 2.82843));
+                                      system->setTraplength(0.0043);
+                                      system->setNumeric(true);
+                                      interaction=true;
+                                      spherical=false;
+                              alpha = system->gradientDescent(0.4);}*/
+                              
+        /*else{pid5=fork();if (pid5==0){system->setInitialState(new RandomUniform(system, 3, 100));
+                                      system->setWaveFunction(new SimpleGaussian(system, 0.5, 2.82843));
+                                      system->setTraplength(0.0043);
+                                      system->setNumeric(true);
+                                      interaction=true;
+                                      spherical=false;
+                                      double bucketSize = 0.01;
+                                      int bins = int(ceil(4 / bucketSize));
+                                      system->setobd(obdwtf, bucketSize, bins);}
+                                      
+        else{pid6=fork();if (pid6==0){system->setInitialState(new RandomUniform(system, 3, 100));
+                                      system->setWaveFunction(new SimpleGaussian(system, 0.5, 2.82843));
+                                      system->setTraplength(0);
+                                      system->setNumeric(true);
+                                      interaction=true;
+                                      spherical=false;
+                                      double bucketSize = 0.01;
+                                      int bins = int(ceil(4 / bucketSize));
+                                      system->setobd(obdwtf, bucketSize, bins);}*/
+
         else                         {system->setInitialState(new RandomUniform(system, 3, 100));
-                              alpha = system->gradientDescent(0.4);}
+                                      //system->setWaveFunction(new SimpleGaussian(system, 0.5, 2.82843));
+                                      //system->setNumeric(true);
+                                      //system->setTraplength(0.0043);
+                                      //interaction=true;
+                                      //spherical=false;
+                              alpha = system->gradientDescent(0.3);}
         }}
       else{
       alpha = system->gradientDescent(initialAlpha);
@@ -120,18 +165,20 @@ int main() {
     else if(collectresults==true && GD==false && check_step==false){
       int pid, pid1, pid2, pid3, pid4, pid5, pid6;
 
-      pid=fork();       if (pid==0){system->setInitialState(new RandomUniform(system, 1, 100));}
-      else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 2, 100));}
+      pid=fork();       if (pid==0){system->setInitialState(new RandomUniform(system, 3, 10));
+                                    system->setWaveFunction(new SimpleGaussian(system, 0.4951, beta));
+}
+      //else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 2, 100));}
       //else{pid2=fork();if (pid2==0){system->setInitialState(new RandomUniform(system, 3, 100));}
       //else{pid3=fork();if (pid3==0){system->setInitialState(new RandomUniform(system, 1, 10));}
-      else{pid4=fork();if (pid4==0){system->setInitialState(new RandomUniform(system, 3, 100));}
-      else{pid5=fork();if (pid5==0){system->setInitialState(new RandomUniform(system, 1, 100));
-                                    system->setBruteforce                    (false);}
-      else{pid6=fork();if (pid6==0){system->setInitialState(new RandomUniform(system, 2, 100));
-                                    system->setBruteforce                    (false);}
-      else                         {system->setInitialState(new RandomUniform(system, 3, 100));
-                                    system->setBruteforce                    (false);}
-      }}}}
+      //else{pid4=fork();if (pid4==0){system->setInitialState(new RandomUniform(system, 3, 100));}
+      //else{pid5=fork();if (pid5==0){system->setInitialState(new RandomUniform(system, 1, 100));
+      //                              system->setBruteforce                    (false);}
+      //else{pid6=fork();if (pid6==0){system->setInitialState(new RandomUniform(system, 2, 100));
+      //                             system->setBruteforce                    (false);}
+      else                         {system->setInitialState(new RandomUniform(system, 3, 50));
+                                   system->setWaveFunction(new SimpleGaussian(system, 0.4847, beta));
+      }
       system->setTimeStep                 (timeStep);
       system->setStepLength               (stepLength);
       system->runMetropolisSteps          (numberOfSteps);

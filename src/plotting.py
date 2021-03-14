@@ -23,19 +23,52 @@ def variationalpha():
     Plotting the results from gradient decent
     """
     #Filenames
-    fn_noninteract=['03N10Dim3.txt', '07N10Dim3.txt', '03N100Dim3.txt']
+    fn_noninteract=['03N10Dim3nice.txt', '07N10Dim3nice.txt', '03N100Dim3nice.txt']
     fn_interact=['N10Dim3.txt', 'N50Dim3.txt', 'N100Dim3.txt']
     #Folders
     folder = ["Results/GDalpha/noninteract/bruteforce/analytic", "Results/GDalpha/interact/bruteforce/numeric"]
 
-    infile = np.loadtxt(data_path(folder[1], fn_interact[0]))
+    infile = np.loadtxt(data_path(folder[1], fn_interact[1]))
 
+
+#    plt.plot(infile[:,0], infile[:,1])
+ #   plt.plot(infile[:,0], infile[:,1], 'ro', markersize=3)
+  #  plt.xlabel(r'$\alpha$',fontsize=14)
+   # plt.ylabel(r'$\langle E_L \rangle(\hbar \omega) $',fontsize=14)
+    #plt.grid()
+    #plt.show()
+
+
+    # Generate data for the zoomed portion
+    #X_detail=infile[5:14,0]
+    #Y_detail = infile[5:14,1]
+    #X_detail=infile[29:len(infile),0]
+    #Y_detail = infile[29:len(infile),1]
+    X_detail=infile[8:len(infile),0]
+    Y_detail = infile[8:len(infile),1]
+
+    # plot the main figure
     plt.plot(infile[:,0], infile[:,1])
     plt.plot(infile[:,0], infile[:,1], 'ro', markersize=3)
+    plt.grid()
     plt.xlabel(r'$\alpha$',fontsize=14)
     plt.ylabel(r'$\langle E_L \rangle(\hbar \omega) $',fontsize=14)
-    plt.grid()
+
+    # location for the zoomed portion 
+    #sub_axes = plt.axes([.52, 0.57, 0.35, 0.25]) 
+    #sub_axes = plt.axes([0.2, 0.57, 0.35, 0.25]) 
+    #sub_axes = plt.axes([0.22, 0.59, 0.35, 0.25]) 
+
+    # plot the zoomed portion
+    #sub_axes.plot(X_detail, Y_detail) 
+    #sub_axes.plot(X_detail, Y_detail, 'ro', markersize=3) 
+
+    # insert the zoomed figure
+    # plt.setp(sub_axes)
+    #plt.grid()
+
     plt.show()
+
 
     return
 

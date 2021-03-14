@@ -59,7 +59,7 @@ void Sampler::sample(bool acceptedStep, int MCstep) {
     time_sec += time_span.count();
 
     //Saving values to be used in blocking
-    if (meanenergy_list.size()<pow(2,18)){
+    if (meanenergy_list.size()<pow(2,15)){
       meanenergy_list.push_back(localEnergy);
     }
 
@@ -245,12 +245,13 @@ void Sampler::writeToFileAlpha(){
 
   int parti= m_system->getNumberOfParticles();
   int dimen= m_system->getNumberOfDimensions();
+  double lastalpha =m_system->getWaveFunction()->getParameters()[0];
   //double alphi=m_system->getAlpha();
   std::vector<double> alphas_list = m_system->get_GDalpha();
   std::vector<double> energy_list = m_system->get_energyarr();
 
   //std::string filename="datadump/test.txt";
-  std::string filename=folderpart1+folderpart2+folderpart3+"N"+std::to_string(parti)+"Dim"+std::to_string(dimen)+".txt";
+  std::string filename=folderpart1+folderpart2+folderpart3+"N"+std::to_string(parti)+"Dim"+std::to_string(dimen)+std::to_string(lastalpha)+".txt";
   myfile2.open(filename);
   cout << "Alphas are being written to file.."<<endl;
   for(int i=0; i<alphas_list.size(); i++){

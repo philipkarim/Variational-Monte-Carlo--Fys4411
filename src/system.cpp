@@ -167,7 +167,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          if (i>=numberOfMetropolisSteps*m_equilibrationFraction){
             m_sampler->sample(acceptedStep, i);
          }
-         //cout<<"The current step is "<<i<<endl;
+         cout<<"The current step is "<<i<<endl;
     }
 
     //Chooosing what to sample
@@ -181,11 +181,11 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
 
 double System::gradientDescent(double initialAlpha){
 //Gradient descent method to find the optimal variational parameter alpha given an initial parameter initialAlpha
-    int steepestDescentSteps = (int) 1e+3;
-    int maxIterations=35;
+    int steepestDescentSteps = (int) 1e+4;
+    int maxIterations=50;
     double alpha = initialAlpha;
     double beta = getWaveFunction()->getParameters()[1];
-    double lambda = -0.01;
+    double lambda = -0.005;
     int iterations = 0;
     double energyDerivative;
     double tol = 1e-5;
