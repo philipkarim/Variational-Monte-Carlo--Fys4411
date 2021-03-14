@@ -28,7 +28,7 @@ def variationalpha():
     #Folders
     folder = ["Results/GDalpha/noninteract/bruteforce/analytic", "Results/GDalpha/interact/bruteforce/numeric"]
 
-    infile = np.loadtxt(data_path(folder[1], fn_interact[1]))
+    infile = np.loadtxt(data_path(folder[1], fn_interact[2]))
 
 
 #    plt.plot(infile[:,0], infile[:,1])
