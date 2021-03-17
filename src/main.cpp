@@ -20,11 +20,11 @@ int main() {
     int seed = 2021;
 
     int numberOfDimensions  = 3;
-    int numberOfParticles   = 50;
+    int numberOfParticles   = 100;
     int numberOfSteps       = (int) pow(2,16);  //16 or 17 would be nice
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z direction
-    double alpha            = 0.495;          // Variational parameter.
+    double alpha            = 0.4696;          // Variational parameter.
     double timeStep         = 0.25;         // Metropolis time step (Importance sampling)
     double stepLength       = 0.5;          // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
@@ -167,6 +167,9 @@ int main() {
 
       pid=fork();       if (pid==0){system->setInitialState(new RandomUniform(system, 3, 10));
                                     system->setWaveFunction(new SimpleGaussian(system, 0.4951, beta));
+                                    system->setTimeStep                 (timeStep);
+                                    system->setStepLength               (stepLength);
+                                    system->runMetropolisSteps          (pow(2,20));
 }
       //else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 2, 100));}
       //else{pid2=fork();if (pid2==0){system->setInitialState(new RandomUniform(system, 3, 100));}
@@ -176,12 +179,15 @@ int main() {
       //                              system->setBruteforce                    (false);}
       //else{pid6=fork();if (pid6==0){system->setInitialState(new RandomUniform(system, 2, 100));
       //                             system->setBruteforce                    (false);}
-      else                         {system->setInitialState(new RandomUniform(system, 3, 50));
-                                   system->setWaveFunction(new SimpleGaussian(system, 0.4847, beta));
+      else                         {system->setInitialState(new RandomUniform(system, 3, 100));
+                                   system->setWaveFunction(new SimpleGaussian(system, 0.4696, beta));
+                                   system->setTimeStep                 (timeStep);
+                                   system->setStepLength               (stepLength);
+                                   system->runMetropolisSteps          (pow(2,16));
       }
-      system->setTimeStep                 (timeStep);
-      system->setStepLength               (stepLength);
-      system->runMetropolisSteps          (numberOfSteps);
+     // system->setTimeStep                 (timeStep);
+     // system->setStepLength               (stepLength);
+    //  system->runMetropolisSteps          (numberOfSteps);
     }
     else{
       system->setTimeStep                 (timeStep);
