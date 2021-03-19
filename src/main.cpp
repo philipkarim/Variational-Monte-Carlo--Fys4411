@@ -20,18 +20,18 @@ int main() {
     int seed = 2021;
 
     int numberOfDimensions  = 3;
-    int numberOfParticles   = 100;
-    int numberOfSteps       = (int) pow(2,16);  //16 or 17 would be nice
+    int numberOfParticles   = 10;
+    int numberOfSteps       = (int) pow(2,19);  //16 or 17 would be nice
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z direction
-    double alpha            = 0.4696;          // Variational parameter.
+    double alpha            = 0.5;          // Variational parameter.
     double timeStep         = 0.25;         // Metropolis time step (Importance sampling)
     double stepLength       = 0.5;          // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
     bool check_step         = false;
-    bool numeric            = true;        // True->Numeric differentiation, False->Analytic
+    bool numeric            = true;         // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
-    bool interaction        = true;
+    bool interaction        = false;
     bool GD                 = false;
     double initialAlpha     = 0.3;          //Initial alpha to start the gradient decent
     bool collectresults     =true;           //True-> aquiring large amount of results in parallel
@@ -65,6 +65,8 @@ int main() {
     system->setHamiltonian              (new HarmonicOscillator(system, omega, omega_z, beta));  //Added alpha
     system->setWaveFunction             (new SimpleGaussian(system, alpha, beta));
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
+    system->setTimeStep                 (timeStep);
+    system->setStepLength               (stepLength);
     system->setEquilibrationFraction    (equilibration);
     system->setNumeric                  (numeric);
     system->setBruteforce               (bruteforce_val);
@@ -165,33 +167,20 @@ int main() {
     else if(collectresults==true && GD==false && check_step==false){
       int pid, pid1, pid2, pid3, pid4, pid5, pid6;
 
-      pid=fork();       if (pid==0){system->setInitialState(new RandomUniform(system, 3, 10));
-                                    system->setWaveFunction(new SimpleGaussian(system, 0.4951, beta));
-                                    system->setTimeStep                 (timeStep);
-                                    system->setStepLength               (stepLength);
-                                    system->runMetropolisSteps          (pow(2,20));
-}
-      //else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 2, 100));}
-      //else{pid2=fork();if (pid2==0){system->setInitialState(new RandomUniform(system, 3, 100));}
-      //else{pid3=fork();if (pid3==0){system->setInitialState(new RandomUniform(system, 1, 10));}
-      //else{pid4=fork();if (pid4==0){system->setInitialState(new RandomUniform(system, 3, 100));}
-      //else{pid5=fork();if (pid5==0){system->setInitialState(new RandomUniform(system, 1, 100));
-      //                              system->setBruteforce                    (false);}
-      //else{pid6=fork();if (pid6==0){system->setInitialState(new RandomUniform(system, 2, 100));
-      //                             system->setBruteforce                    (false);}
-      else                         {system->setInitialState(new RandomUniform(system, 3, 100));
-                                   system->setWaveFunction(new SimpleGaussian(system, 0.4696, beta));
-                                   system->setTimeStep                 (timeStep);
-                                   system->setStepLength               (stepLength);
-                                   system->runMetropolisSteps          (pow(2,16));
-      }
-     // system->setTimeStep                 (timeStep);
-     // system->setStepLength               (stepLength);
-    //  system->runMetropolisSteps          (numberOfSteps);
+      pid=fork();       if (pid==0){system->setInitialState(new RandomUniform(system, 3, 500));}
+      else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 2, 500));}
+      else{pid2=fork();if (pid2==0){system->setInitialState(new RandomUniform(system, 3, 500));}
+      else{pid3=fork();if (pid3==0){system->setInitialState(new RandomUniform(system, 1, 500));
+                                    system->setBruteforce                    (false);}
+      else{pid4=fork();if (pid4==0){system->setInitialState(new RandomUniform(system, 2, 500));
+                                    system->setBruteforce                    (false);}
+      else{                         system->setInitialState(new RandomUniform(system, 3, 500));
+                                    system->setBruteforce                    (false);}
+      }}}}
+      system->runMetropolisSteps          (numberOfSteps);
     }
+
     else{
-      system->setTimeStep                 (timeStep);
-      system->setStepLength               (stepLength);
       system->runMetropolisSteps          (numberOfSteps);
     }
   
