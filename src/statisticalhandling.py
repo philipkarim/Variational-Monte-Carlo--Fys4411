@@ -57,10 +57,10 @@ folder_bruteforce = ["Results/bruteforce/analytic", "Results/bruteforce/numeric"
 folder_importance = ["Results/importancesampling/analytic", "Results/importancesampling/numeric"]
 
 #Filenames interacting
-fn_interact=   ["N=10Dim=3_interact", "N=50Dim=3_interact", "N=100Dim=3_interact"]
-folder_interact = ["Results/bruteforce/numeric/"]
+fn_interact=   ["N=10Dim=3_interact", "N=50Dim=3_interact", "N=100Dim=3_interact", "N=10Dim=3_interact_220steps"]
+folder_interact = ["Results/bruteforce/numeric/interact/"]
 
-infile = open(data_path(folder_interact[0], fn_interact[1]),'r')
+infile = open(data_path(folder_interact[0], fn_interact[3]),'r')
 
 x = loadtxt(infile)
 (mean, var) = block(x) 
