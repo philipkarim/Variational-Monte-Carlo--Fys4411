@@ -5,7 +5,7 @@
 Project 1 - Project on Variational Monte Carlo.
 
 ###Report
-The report is found in the [`docs`](https://github.com/philipkarim/Variational-Monte-Carlo--Fys4411/tree/main/docs) folder. 
+The report is found in the [`docs`](https://github.com/philipkarim/Variational-Monte-Carlo--Fys4411/tree/main/docs) folder.
 
 ###Code files and results
 All source code is found in the [`src`](https://github.com/philipkarim/Variational-Monte-Carlo--Fys4411/tree/main/src) folder. In addition, the results written to file and figures used in the report can be found in [`src/results/`](https://github.com/philipkarim/Variational-Monte-Carlo--Fys4411/tree/main/src/Results)
