@@ -1,7 +1,6 @@
 #include "randomuniform.h"
 #include <iostream>
 #include <cassert>
-#include "Math/random.h"
 #include "../particle.h"
 #include "../system.h"
 
@@ -32,33 +31,20 @@ void RandomUniform::setupInitialState() {
     std::mt19937_64 gen(rd());
 
     // Set up the distribution for x \in [[0, 1],(can use multiple configurations)
-    //std::normal_distribution<double> UniformNumberGenerator(0.0,1.0);
-
     std::uniform_real_distribution<double> UniformNumberGenerator(0.0,1.0);
-    //std::normal_distribution<double> Normaldistribution(0.0,1.0);
 
-    //Non interacting, might write a second function for interacting case and
-    //choose the correct function b sending a parameter from main
+    //Looping over the dimensions and particles initializing each
+    //particle with a random placement using a uniform distribution
     for (int i=0; i < m_numberOfParticles; i++) {
         std::vector<double> position = std::vector<double>();
 
-        for (int j=0; j < m_numberOfDimensions; j++) {
-            /* This is where you should actually place the particles in
-             * some positions, according to some rule. Since this class is
-             * called random uniform, they should be placed randomly according
-             * to a uniform distribution here. However, later you will write
-             * more sub-classes of the InitialState class in which the
-             * particles are placed in other configurations.
-             *
-             * Note: For now, the particles are simply placed in positions
-             * according to their index in the particles list (this is
-             * obviously NOT a good idea).
-             */
+        for (int dim=0; dim < m_numberOfDimensions; dim++) {
+             // This is where the particles are placed in positions
+             // using the uniform generator
              double temp_pos=(UniformNumberGenerator(gen) - 0.5);
-             //std::cout<<temp_pos;
              position.push_back(temp_pos);
         }
-
+        //Setting the number of dimensions and appending new particle postions
         m_particles.push_back(new Particle());
         m_particles[i]->setNumberOfDimensions(m_numberOfDimensions);
         m_particles[i]->setPosition(position);

@@ -4,7 +4,7 @@ class Sampler {
 public:
     Sampler(class System* system);
     void setNumberOfMetropolisSteps(int steps);
-    void sample(bool acceptedStep, int MCstep);
+    void sample(bool acceptedStep);
     void printOutputToTerminal();
     void computeAverages();
     void writeToFile();
@@ -39,7 +39,6 @@ private:
     double m_cumulativeE_Lderiv=0;
     double m_cumulativeE_Lderiv_expect=0;
 
-    std::vector<double> energy_vec = std::vector<double>();
     std::vector<double> meanenergy_list = std::vector<double>();
 
     class System* m_system = nullptr;

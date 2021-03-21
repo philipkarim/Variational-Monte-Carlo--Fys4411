@@ -5,7 +5,6 @@
 #include "WaveFunctions/wavefunction.h"
 #include "Hamiltonians/hamiltonian.h"
 #include "InitialStates/initialstate.h"
-#include "Math/random.h"
 #include <iostream>
 
 #include "WaveFunctions/simplegaussian.h"
@@ -21,18 +20,14 @@ System::System(int seed) {
 }
 
 bool System::metropolisStep() {
-    /* Perform the actual Metropolis step: Choose a particle at random and
-     * change it's position by a random amount, and check if the step is
-     * accepted by the Metropolis test (compare the wave function evaluated
-     * at this new position with the one at the old position).
-     */
-
-     //_________BRUTE FORCE_____________
-
+    // Performing the actual Metropolis step for the Metropolis algorithm:
+    // Choosing a particle at random and changing it's position by a random
+    // amount, and checks if the step is accepted by the Metropolis test
+    
+    // Defining some variables to be used
      int random_index;
-     double psi_factor;
+     double psi_factor, step;
      double wfold=m_waveFunction->evaluate(m_particles);
-     //double wfold=m_stepLength;
      std::vector<double> PositionOld=std::vector<double>();
 
      //Random integer generator
@@ -44,29 +39,19 @@ bool System::metropolisStep() {
      //Random index used to choose a random particle
      random_index=distribution(gen);
      //Defining the random particle:
-
-
      PositionOld=m_particles[random_index]->getPosition();
 
-     //Choosing a random step:
-     //double temp_rand=UniformNumberGenerator(gen);
-     double step;
-
-     //Start the step which gives movement of the particle
+     //Start the step which gives movement to the particle
      for (int dim=0; dim<m_numberOfDimensions; dim++){
         step=m_stepLength*(UniformNumberGenerator(gen)-0.5);
-       //Try moving this random thing in the forloop
-       //double temp_rand=UniformNumberGenerator(gen);
-       //double step=m_stepLength*(temp_rand-0.5);
-       m_particles[random_index]->adjustPosition(step, dim);
+        m_particles[random_index]->adjustPosition(step, dim);
      }
-
-     //std::cout << wfold<<std::endl;
 
      //Extracting the new wavefunction, and checks if it is accepted
      double wfnew=m_waveFunction->evaluate(m_particles);
      psi_factor=wfnew*wfnew/(wfold*wfold);
-     //If accepted:
+     
+     //Checks if the move is accepted:
      if (UniformNumberGenerator(gen)<=psi_factor){
         wfold=wfnew;
         return true;
@@ -78,11 +63,14 @@ bool System::metropolisStep() {
 }
 
 bool System::metropolisStepImportanceSampling() {
-    //_________Importance sampling_____________
-
+    // Performing the actual Metropolis step for the Metropolis- Hastings
+    //algorithm: Choosing a particle at random and changing it's position 
+    // by a random amount, and checks if the step is accepted by the 
+    //Metropolis-Hastings test
+    
     //Declaring vaiables to be used:
     double part_1, part_2, green_factor, step, greenRate=0;
-    //double TS=m_system->getTimeStep();
+
     //Defining position and quantum force vectors
     //to be used in the importance sampling
     std::vector<double> PositionOld=std::vector<double>();
@@ -106,7 +94,8 @@ bool System::metropolisStepImportanceSampling() {
     double wfold=m_waveFunction->evaluate(m_particles);
     PositionOld=m_particles[random_index]->getPosition();
     QFOld=m_waveFunction->computeQuantumForce(PositionOld);
-
+    
+    //Looping over the dimensions of the random particle
     for (int dim=0; dim<m_numberOfDimensions; dim++){
         step=QFOld[dim]*m_timeStep*0.5 + sqrt(m_timeStep)*rand_norm;
         m_particles[random_index]->adjustPosition(step, dim);
@@ -145,8 +134,12 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
     bool acceptedStep;
 
+    //Setting the histogram to be used in the one body density
     setHistogram();
-
+    
+    //Looping over the amount of metropolis steps
+    //for either the Metroopolis algorithm or the
+    //Metropolis-Hastings algorithm
     for (int i=0; i < numberOfMetropolisSteps; i++) {
       if (m_bruteforce==true){
         acceptedStep = metropolisStep();
@@ -155,19 +148,12 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
         acceptedStep = metropolisStepImportanceSampling();
       }
 
-        /* Here you should sample the energy (and maybe other things using
-         * the m_sampler instance of the Sampler class. Make sure, though,
-         * to only begin sampling after you have let the system equilibrate
-         * for a while. You may handle this using the fraction of steps which
-         * are equilibration steps; m_equilibrationFraction.
-         */
-
-         //If statement to send the accepted steps into the sampler
-         //after the system is at rest
-         if (i>=numberOfMetropolisSteps*m_equilibrationFraction){
-            m_sampler->sample(acceptedStep, i);
-         }
-         cout<<"The current step is "<<i<<endl;
+      //If statement to send the accepted steps into the sampler
+      //after the system is at rest
+      if (i>=numberOfMetropolisSteps*m_equilibrationFraction){
+        m_sampler->sample(acceptedStep);
+      }
+    //cout<<"The current step is "<<i<<endl;
     }
 
     //Chooosing what to sample
@@ -181,8 +167,10 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
 
 double System::gradientDescent(double initialAlpha){
 //Gradient descent method to find the optimal variational parameter alpha given an initial parameter initialAlpha
-    int steepestDescentSteps = (int) 1e+4;
-    int maxIterations=50;
+   
+   //Defining some variables to be used
+    int steepestDescentSteps = (int) 1e+5;
+    int maxIterations=35;
     double alpha = initialAlpha;
     double beta = getWaveFunction()->getParameters()[1];
     double lambda = -0.005;
@@ -191,20 +179,26 @@ double System::gradientDescent(double initialAlpha){
     double tol = 1e-5;
     vector<double> parameterss(2);
     m_GDalpha.push_back(alpha);
-
+    
+    //Starting the while loop performing the gradient decent
     while (iterations < maxIterations){
+        //Changing the updated parameters each iteration.(Beta is the same each iteration in this case)
         parameterss[0] = alpha;
         parameterss[1] = beta;
         getWaveFunction()->setParameters(parameterss);
-
+        
+        //Running the metroolis simulation
         runMetropolisSteps(steepestDescentSteps);
         
+        //Calculating the energyderivative
         energyDerivative = getSampler()->Energy_Der2();
-
+        
+        //Calculating the new alpha
         alpha += lambda*energyDerivative;
 
         cout<<energyDerivative<<endl;
-
+        
+        //Sampling some energy and alpha values
         m_energyarr.push_back(m_sampler->getEnergy());
         m_GDalpha.push_back(alpha);
         iterations++;
@@ -212,6 +206,8 @@ double System::gradientDescent(double initialAlpha){
         cout<< " New alpha = "  << alpha <<  endl;
         cout<< " Iterations = " << iterations << endl;
 
+        //If the derivative is less than the tol, the while
+        //loop breaks
         if (fabs(energyDerivative) < tol){
             cout<<endl;
             cout<<"Alpha stabilized: Tol reached before iterator"<<endl;
@@ -224,18 +220,22 @@ double System::gradientDescent(double initialAlpha){
 
     cout<<"Performing metropolisrun with best alpha"<<endl;
 
-    //alpha = cumulativeAlpha / (maxIterations*percentAlphasToSave);
     return alpha;
 }
 
 void System::checkStep(double stepLength, double timeStep){
+//Function for calculating the energy as a function of stepsize and time steps
+
     setStepLength               (stepLength);
     setTimeStep                 (timeStep);
+
+    //Declaring some variables to be used
     int steps = 0;
     int maxsteps=1000000;
     vector<int> steps_list=vector<int>();
     vector<double> meanEL_list=vector<double>();
-
+    
+    //A while loop to run the simulations untill the step amount is at maxsteps
     while (steps < maxsteps){
         runMetropolisSteps(steps);
 
@@ -251,19 +251,24 @@ void System::checkStep(double stepLength, double timeStep){
 
 }
 
-
-
 void System::oneBodyDensity(){
-    //Function to make the histrograms needed to compute the one body density
+//Function for calculating the one body density
+
+    //Defining some variables to be used
     vector<int> histogram(m_bins);
     int bucket;
     double r2 = 0;
-    for (int j=0; j<getNumberOfParticles(); j++){
-        r2 = 0;
+    double part3;
 
-        for (int d=0; d<getNumberOfDimensions(); d++){
-            r2 += m_particles.at(j)->getPosition()[d]*m_particles.at(j)->getPosition()[d];
+    //Looping over each particle
+    for (int i=0; i<getNumberOfParticles(); i++){
+        r2 = 0;
+        //Looping over each dimension
+        for (int dim=0; dim<getNumberOfDimensions(); dim++){
+            part3=m_particles.at(i)->getPosition()[dim];
+            r2 += part3*part3;
         }
+        //Fixing th ehistogram
         r2 = sqrt(r2);
         bucket = int(floor(r2/m_bucketSize));
         histogram[bucket] += 1;
@@ -275,18 +280,6 @@ void System::oneBodyDensity(){
     }
 }
 
-/*
-void System::setOneBodyDensity(double min, double max, int numberOfBins) {
-    m_numberOfBins = numberOfBins;
-    m_min = min;
-    m_max = max;
-    m_binWidth = (max - min) / numberOfBins;
-    m_bins = (double**) calloc(m_system->getNumberOfDimensions(), sizeof(double*));
-    for (int i=0; i<m_system->getNumberOfDimensions(); i++) {
-        m_bins[i] = (double*) calloc(m_numberOfBins, sizeof(double));
-    }
-}
-*/
 
 void System::setNumberOfParticles(int numberOfParticles) {
     m_numberOfParticles = numberOfParticles;

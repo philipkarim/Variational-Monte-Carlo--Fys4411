@@ -11,9 +11,7 @@ public:
     virtual double computeDoubleDerivative(std::vector<class Particle*> particles) = 0;
     virtual double correlation(class Particle* particle1, class Particle* particle2)=0;
     virtual std::vector<double> computeQuantumForce (std::vector<double> particles)=0;
-    virtual double computeDoubleDerivativeInteraction(std::vector<class Particle*> particles)=0;
     void setParameters(const std::vector<double> &parameters);
-    virtual std::vector<double> computeGradient(std::vector<Particle*> particles)=0;
 
 protected:
     int     m_numberOfParameters = 0;
