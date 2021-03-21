@@ -1,96 +1,70 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression
-from sklearn.pipeline import Pipeline, make_pipeline
-
 fonts = {"font.size": 14}
 plt.rcParams.update(fonts)
 
-def read_file(filename):
-    prob = []; r = []
-    with open("Results/onebodydensity/"+filename, "r") as infile:
+#Defining the filenames
+filenames=["jastrow/N10Dim3Jold.txt", "nonjastrow/N10Dim3old.txt", "jastrow/N50Dim3new.txt", "nonjastrow/N50Dim3new.txt"]
+
+#Making som empty array to fill up with values from the files
+lists_r=[np.empty(shape=(0)) for _ in range(4)]
+lists_rho=[np.empty(shape=(0)) for _ in range(4)]
+
+#Reading the files
+for files in range(0,4):
+    with open("Results/onebodydensity/"+filenames[files], "r") as infile:
         lines = infile.readlines()
         for i in range(len(lines)):
             line = lines[i]
-            vals = line.split()
-            prob.append(float(vals[0]))
-            r.append(float(vals[1]))
+            value = line.split()
+            lists_r[files]=np.append(lists_r[files],float(value[1]))
+            lists_rho[files]=np.append(lists_rho[files],float(value[0]))
 
-    for j in range(len(prob)):
-        if prob[j] > 1.0:
-            del r[j]
-    for i in prob[:]:
+#Just a file to remove too high values
+def finetuning(rad, rho):
+    rho = rho.tolist()
+    rad = rad.tolist()
+    for j in range(len(rho)):
+        if rho[j] > 1.0:
+            del rad[j]
+
+    for i in rho[:]:
         if i > 1.0:
-            prob.remove(i)
+            rho.remove(i)
+    return rad, rho
 
-    return prob, r
-
-
-"""
-probEJ10, rEJ10 = read_file("jastrow/N10Dim3Jold.txt")
-probE10, rE10 = read_file("nonjastrow/N10Dim3old.txt")
-"""
-probEJ10, rEJ10 = read_file("jastrow/N50Dim3new.txt")
-probE10, rE10 = read_file("nonjastrow/N50Dim3new.txt")
-
-plt.figure()
-
-plt.plot(rE10, probE10, "ro", markersize=3,label="N=10, no-Jastrow")
-plt.plot(rEJ10, probEJ10, "bo",markersize=3, label="N=10, Jastrow")
+#making lists ready to be plotted
+rad10J, rho10J=finetuning(lists_r[0], lists_rho[0])
+rad10, rho10=finetuning(lists_r[1], lists_rho[1])
+rad50J, rho50J=finetuning(lists_r[2], lists_rho[2])
+rad50, rho50=finetuning(lists_r[3], lists_rho[3])
 
 
-#x=rEJ10
-#y=probEJ10
+#Plotting from here on
+fig, (ax1, ax2) = plt.subplots(2)
+ax1.scatter(rad10J, rho10J, s=7, label="N=10, With Jastrow",  color='#d62728')
+ax1.scatter(rad10, rho10, s=7, label="N=10, Without Jastrow", color='#1f77b4')
+ax2.scatter(rad50J, rho50J, s=7, label="N=50, With Jastrow",  color='#d62728')
+ax2.scatter(rad50, rho50, s=7, label="N=50, Without Jastrow", color='#1f77b4')
 
-x=np.array(rEJ10)
-y=np.array(probEJ10)
+ax1.set_xlabel("r")
+ax1.set_ylabel(r'$\rho(r)$')
+ax1.legend(loc="best")
+ax1.grid()
+ax2.set_xlabel("r")
+ax2.set_ylabel(r'$\rho(r)$')
+ax2.legend(loc="best")
+ax2.grid()
 
-x = x.reshape(-1,1)
-y = y.reshape(-1,1)
+plt.show()
 
-#plt.plot(rE10, probE10, label="N=10, no-Jastrow")
-#plt.plot(rEJ10, probEJ10,  label="N=10, Jastrow")
-
-
-plt.xlabel("r/$a_{ho}$")
-plt.ylabel("Probability")
+plt.scatter(rad50J, rho50J, s=7, label="N=50, With Jastrow",  color='#d62728')
+plt.scatter(rad50, rho50, s=7, label="N=50, Without Jastrow", color='#1f77b4')
+plt.xlabel("r")
+plt.ylabel(r'$\rho(r)$')
 plt.legend(loc="best")
 plt.tight_layout()
-#plt.savefig("Figures/onebody_N_10.png")
 plt.grid()
 plt.show()
 
-#probEJ10, rEJ10 = read_file("jastrow/N10Dim3Jold.txt")
-
-x=rEJ10
-y=probEJ10
-
-x2=rE10
-y2=probE10
-
-x=np.array(x)
-y=np.array(y)
-
-x2=np.array(x)
-y2=np.array(y)
-
-
-x = x.reshape(-1,1)
-y = y.reshape(-1,1)
-
-model_1 = make_pipeline(PolynomialFeatures(degree = 6),LinearRegression())
-model_1.fit(x.reshape(-1,1),y)
-y=model_1.predict(x.reshape(-1,1))
-
-model_2 = make_pipeline(PolynomialFeatures(degree = 7),LinearRegression())
-model_2.fit(x2.reshape(-1,1),y2)
-y2=model_2.predict(x2.reshape(-1,1))
-#plt.figure(figsize = (8,5))
-#plt.scatter(x,y, label = 'Data')
-plt.plot(x,y, color = 'red', label = 'jastrow')
-plt.plot(x2,y2, color = 'blue', label = 'no jastrow')
-plt.xlabel("r/$a_{ho}$")
-plt.ylabel("Probability")
-plt.legend(), plt.show()

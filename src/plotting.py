@@ -30,14 +30,12 @@ def variationalpha():
 
     infile = np.loadtxt(data_path(folder[1], fn_interact[2]))
 
-
-#    plt.plot(infile[:,0], infile[:,1])
- #   plt.plot(infile[:,0], infile[:,1], 'ro', markersize=3)
-  #  plt.xlabel(r'$\alpha$',fontsize=14)
-   # plt.ylabel(r'$\langle E_L \rangle(\hbar \omega) $',fontsize=14)
+    #plt.plot(infile[:,0], infile[:,1])
+    #plt.plot(infile[:,0], infile[:,1], 'ro', markersize=3)
+    #plt.xlabel(r'$\alpha$',fontsize=14)
+    #plt.ylabel(r'$\langle E_L \rangle(\hbar \omega) $',fontsize=14)
     #plt.grid()
     #plt.show()
-
 
     # Generate data for the zoomed portion
     #X_detail=infile[5:14,0]
