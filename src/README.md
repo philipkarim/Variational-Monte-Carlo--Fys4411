@@ -1,5 +1,6 @@
 # Simple Variational Monte Carlo solve for FYS4411
-## Main program
+## Code structure
+### Main program
 All parameters are defined in `main`. The most fundamental parts of the code are `system.cpp` which are executing the metropolis steps and `sampler.cpp` which is sampling the results. The codes in the `initialStates` folder are initializing the system by distributing the particles. The codes in the `wavefunction` folder are implementing exactly that, the wavefunction. The codes in the `Hamiltonian` folder is used to compute the hamiltonian energy.
 
 ### Analytics
