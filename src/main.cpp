@@ -16,9 +16,9 @@ int main() {
     // Seed for the random number generator
     int seed = 2021;
 
-    int numberOfDimensions  = 1;            // Set amount of dimensions
-    int numberOfParticles   = 1;            // Set amount of particles
-    int numberOfSteps       = (int) pow(2,19); //Amount of metropolis steps
+    int numberOfDimensions  = 3;            // Set amount of dimensions
+    int numberOfParticles   = 10;            // Set amount of particles
+    int numberOfSteps       = (int) pow(2,16); //Amount of metropolis steps
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z direction
     double alpha            = 0.5;          // Variational parameter.
@@ -26,15 +26,15 @@ int main() {
     double stepLength       = 0.5;          // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
     bool check_step         = false;        // Simulating as function of step sizes
-    bool numeric            = false;        // True->Numeric differentiation, False->Analytic
+    bool numeric            = true;        // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
-    bool interaction        = false;        //True-> interaction, False->Not interaction
-    bool GD                 = false;        //True-> gradient decent, False->Not gradietn decent
-    double initialAlpha     = 0.3;          //Initial alpha to start the gradient decent
-    bool collectresults     =false;         //True-> aquiring large amount of results in parallel
+    bool interaction        = true;        //True-> interaction, False->Not interaction
+    bool GD                 = true;        //True-> gradient decent, False->Not gradietn decent
+    double initialAlpha     = 0.45;          //Initial alpha to start the gradient decent
+    bool collectresults     =true;         //True-> aquiring large amount of results in parallel
     bool onebodydensity     =false;         //Extracting the positions to be used on the one body density
     //Write to file
-    bool GDwtf             =false;          //GD-Write to file
+    bool GDwtf             =true;          //GD-Write to file
     bool generalwtf        =false;          //General information- write to file
     bool obdwtf            =false;          //One body density write to file
 
@@ -84,18 +84,18 @@ int main() {
       if (collectresults==true){
         int pid, pid1, pid2;
         //Parallelizing the code using 4 cores
-        pid=fork();       if (pid==0){system->setInitialState(new RandomUniform(system, 3, 10));
-                              alpha = system->gradientDescent(0.3);}
+        pid=fork();       if (pid==0){system->setInitialState(new RandomUniform(system, 3, 50));
+                              alpha = system->gradientDescent(0.45);}
 
-        else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 3, 10));
-                              alpha = system->gradientDescent(0.7);}
+        //else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 3, 10));
+        //                      alpha = system->gradientDescent(0.7);}
         
-        else{pid2=fork();if (pid2==0){system->setInitialState(new RandomUniform(system, 3, 100));
-                              alpha = system->gradientDescent(0.3);}
+        //else{pid2=fork();if (pid2==0){system->setInitialState(new RandomUniform(system, 3, 100));
+        //                      alpha = system->gradientDescent(0.3);}
 
         else                         {system->setInitialState(new RandomUniform(system, 3, 100));
-                              alpha = system->gradientDescent(0.7);}
-        }}}
+                              alpha = system->gradientDescent(0.45);}
+        }
       //Running a regular gradient decent without parallel computing
       else{
       alpha = system->gradientDescent(initialAlpha);
@@ -103,7 +103,7 @@ int main() {
       parameters[0] = alpha;
       parameters[1] = beta;
       system->getWaveFunction()->setParameters(parameters);
-      system->runMetropolisSteps           (numberOfSteps);
+      //system->runMetropolisSteps           (numberOfSteps);
       } 
     }
 

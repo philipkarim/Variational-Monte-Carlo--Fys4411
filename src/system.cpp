@@ -169,7 +169,7 @@ double System::gradientDescent(double initialAlpha){
 //Gradient descent method to find the optimal variational parameter alpha given an initial parameter initialAlpha
    
    //Defining some variables to be used
-    int steepestDescentSteps = (int) 1e+5;
+    int steepestDescentSteps = (int) 1e+3;
     int maxIterations=35;
     double alpha = initialAlpha;
     double beta = getWaveFunction()->getParameters()[1];

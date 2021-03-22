@@ -24,11 +24,11 @@ def variationalpha():
     """
     #Filenames
     fn_noninteract=['03N10Dim3nice.txt', '07N10Dim3nice.txt', '03N100Dim3nice.txt']
-    fn_interact=['N10Dim3.txt', 'N50Dim3.txt', 'N100Dim3.txt']
+    fn_interact=['N10Dim3new.txt', 'N50Dim3new.txt', 'N100Dim3.txt']
     #Folders
     folder = ["Results/GDalpha/noninteract/bruteforce/analytic", "Results/GDalpha/interact/bruteforce/numeric"]
 
-    infile = np.loadtxt(data_path(folder[1], fn_interact[2]))
+    infile = np.loadtxt(data_path(folder[1], fn_interact[1]))
 
     #plt.plot(infile[:,0], infile[:,1])
     #plt.plot(infile[:,0], infile[:,1], 'ro', markersize=3)
