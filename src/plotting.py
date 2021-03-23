@@ -24,11 +24,11 @@ def variationalpha():
     """
     #Filenames
     fn_noninteract=['03N10Dim3nice.txt', '07N10Dim3nice.txt', '03N100Dim3nice.txt']
-    fn_interact=['N10Dim3new.txt', 'N50Dim3new.txt', 'N100Dim3.txt']
+    fn_interact=['N10Dim3new.txt', 'N50Dim3new.txt', 'N100Dim3new.txt']
     #Folders
     folder = ["Results/GDalpha/noninteract/bruteforce/analytic", "Results/GDalpha/interact/bruteforce/numeric"]
 
-    infile = np.loadtxt(data_path(folder[1], fn_interact[1]))
+    infile = np.loadtxt(data_path(folder[1], fn_interact[0]))
 
     #plt.plot(infile[:,0], infile[:,1])
     #plt.plot(infile[:,0], infile[:,1], 'ro', markersize=3)
@@ -53,17 +53,17 @@ def variationalpha():
     plt.ylabel(r'$\langle E_L \rangle(\hbar \omega) $',fontsize=14)
 
     # location for the zoomed portion 
-    #sub_axes = plt.axes([.52, 0.57, 0.35, 0.25]) 
+    sub_axes = plt.axes([.52, 0.57, 0.35, 0.25]) 
     #sub_axes = plt.axes([0.2, 0.57, 0.35, 0.25]) 
     #sub_axes = plt.axes([0.22, 0.59, 0.35, 0.25]) 
 
     # plot the zoomed portion
-    #sub_axes.plot(X_detail, Y_detail) 
-    #sub_axes.plot(X_detail, Y_detail, 'ro', markersize=3) 
+    sub_axes.plot(X_detail, Y_detail) 
+    sub_axes.plot(X_detail, Y_detail, 'ro', markersize=3) 
 
     # insert the zoomed figure
-    # plt.setp(sub_axes)
-    #plt.grid()
+    #plt.setp(sub_axes)
+    plt.grid()
 
     plt.show()
 
