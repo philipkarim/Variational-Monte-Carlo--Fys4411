@@ -60,7 +60,7 @@ folder_importance = ["Results/importancesampling/analytic", "Results/importances
 fn_interact=   ["N=10Dim=3_interact_new", "N=50Dim=3_interact", "N=100Dim=3_interact", "N=10Dim=3_interact_220steps"]
 folder_interact = ["Results/bruteforce/numeric/interact/"]
 
-infile = open(data_path(folder_importance[1], fn[11]),'r')
+infile = open(data_path(folder_bruteforce[1], fn[3]),'r')
 
 x = loadtxt(infile)
 (mean, var) = block(x) 

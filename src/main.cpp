@@ -17,7 +17,7 @@ int main() {
     int seed = 2021;
 
     int numberOfDimensions  = 1;            // Set amount of dimensions
-    int numberOfParticles   = 500;            // Set amount of particles
+    int numberOfParticles   = 1;            // Set amount of particles
     int numberOfSteps       = (int) pow(2,19); //Amount of metropolis steps
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z direction
@@ -26,7 +26,7 @@ int main() {
     double stepLength       = 0.5;          // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
     bool check_step         = false;        // Simulating as function of step sizes
-    bool numeric            = true;        // True->Numeric differentiation, False->Analytic
+    bool numeric            = false;        // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
     bool interaction        = false;        //True-> interaction, False->Not interaction
     bool GD                 = false;        //True-> gradient decent, False->Not gradietn decent
@@ -35,7 +35,7 @@ int main() {
     bool onebodydensity     =false;         //Extracting the positions to be used on the one body density
     //Write to file
     bool GDwtf             =false;          //GD-Write to file
-    bool generalwtf        =true;          //General information- write to file
+    bool generalwtf        =false;          //General information- write to file
     bool obdwtf            =false;          //One body density write to file
 
     double beta, a_length;                  //Defined under
