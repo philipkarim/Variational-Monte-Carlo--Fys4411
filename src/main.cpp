@@ -26,32 +26,32 @@ int main() {
     double stepLength       = 0.5;          // Metropolis step length.
     double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
     bool check_step         = false;        // Simulating as function of step sizes
-    bool numeric            = false;        // True->Numeric differentiation, False->Analytic
+    bool numeric            = true;         // True->Numeric differentiation, False->Analytic
     bool bruteforce_val     = true;         // True->bruteforce, False->Importance sampling
-    bool interaction        = false;        //True-> interaction, False->Not interaction
-    bool GD                 = false;        //True-> gradient decent, False->Not gradietn decent
-    double initialAlpha     = 0.45;          //Initial alpha to start the gradient decent
-    bool collectresults     =false;         //True-> aquiring large amount of results in parallel
-    bool onebodydensity     =false;         //Extracting the positions to be used on the one body density
+    bool interaction        = false;        // True-> interaction, False->Not interaction
+    bool GD                 = false;        // True-> gradient decent, False->Not gradietn decent
+    double initialAlpha     = 0.45;         // Initial alpha to start the gradient decent
+    bool collectresults     =false;         // True-> aquiring large amount of results in parallel
+    bool onebodydensity     =false;         // Extracting the positions to be used on the one body density
     //Write to file
-    bool GDwtf             =false;          //GD-Write to file
-    bool generalwtf        =false;          //General information- write to file
-    bool obdwtf            =false;          //One body density write to file
+    bool GDwtf             =false;          // GD-Write to file
+    bool generalwtf        =false;          // General information- write to file
+    bool obdwtf            =false;          // One body density write to file
 
-    double beta, a_length;                  //Defined under
+    double beta, a_length;                  // Defined under
     bool spherical;
 
     //Just making it easier to switch between interacting and non interacting cases
     if (interaction==true){
-      //a_length=0;                     //Without the Jastrow factor remove //
-      a_length=0.0043;                  //Trap length
-      beta=2.82843;                     //Beta value
-      spherical=false;                  //Trap symmetry
+      //a_length=0;                     // Without the Jastrow factor remove //
+      a_length=0.0043;                  // Trap length
+      beta=2.82843;                     // Beta value
+      spherical=false;                  // Trap symmetry
     }
     else{
-      a_length         =0.0;            //Trap length
-      beta             =1.0;            //Beta value
-      spherical=true;                   //Trap symmetry
+      a_length         =0.0;            // Trap length
+      beta             =1.0;            // Beta value
+      spherical=true;                   // Trap symmetry
     }
     if (spherical==true){
       omega_z=omega;
@@ -87,15 +87,15 @@ int main() {
         pid=fork();       if (pid==0){system->setInitialState(new RandomUniform(system, 3, 50));
                               alpha = system->gradientDescent(0.45);}
 
-        //else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 3, 10));
-        //                      alpha = system->gradientDescent(0.7);}
+        else{pid1=fork();if (pid1==0){system->setInitialState(new RandomUniform(system, 3, 10));
+                              alpha = system->gradientDescent(0.7);}
         
-        //else{pid2=fork();if (pid2==0){system->setInitialState(new RandomUniform(system, 3, 100));
-        //                      alpha = system->gradientDescent(0.3);}
+        else{pid2=fork();if (pid2==0){system->setInitialState(new RandomUniform(system, 3, 100));
+                              alpha = system->gradientDescent(0.3);}
 
         else                         {system->setInitialState(new RandomUniform(system, 3, 100));
                               alpha = system->gradientDescent(0.45);}
-        }
+        }}}
       //Running a regular gradient decent without parallel computing
       else{
       alpha = system->gradientDescent(initialAlpha);
